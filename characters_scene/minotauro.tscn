@@ -1,10 +1,14 @@
-[gd_scene load_steps=40 format=3 uid="uid://c5a22uw7o2v2v"]
+[gd_scene load_steps=48 format=3 uid="uid://c5a22uw7o2v2v"]
 
 [ext_resource type="Texture2D" uid="uid://23r2ywcrfab0" path="res://characters/Minotaur_1/Idle.png" id="1_ljfoh"]
 [ext_resource type="Script" uid="uid://bm3ohk6w076q6" path="res://characters_scene/characterBody2D_minotauro.gd" id="1_m87cc"]
 [ext_resource type="Texture2D" uid="uid://dpfhabxwr4wif" path="res://characters/Minotaur_1/Attack.png" id="1_tposp"]
+[ext_resource type="PackedScene" uid="uid://bjnjyb3qucumu" path="res://characters_scene/axe_scene.tscn" id="2_ssfnl"]
 [ext_resource type="Texture2D" uid="uid://c76ye8wflieun" path="res://characters/Minotaur_1/Walk.png" id="3_m87cc"]
 [ext_resource type="Texture2D" uid="uid://l67u4vc8umrk" path="res://characters/Minotaur_1/Dead.png" id="3_ssfnl"]
+[ext_resource type="Texture2D" uid="uid://csbrq3f6t1jp5" path="res://characters/Minotaur_1/Hurt.png" id="5_rs2wt"]
+[ext_resource type="AudioStream" uid="uid://dhyiymd424fr" path="res://music/monster-attack-100270.mp3" id="6_ssfnl"]
+[ext_resource type="AudioStream" uid="uid://bgy78pp1ubopl" path="res://music/knife-throw-88751.mp3" id="8_rwkl7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7qeho"]
 atlas = ExtResource("1_tposp")
@@ -46,6 +50,18 @@ region = Rect2(384, 0, 128, 128)
 atlas = ExtResource("3_ssfnl")
 region = Rect2(512, 0, 128, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_wok5y"]
+atlas = ExtResource("5_rs2wt")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hx1s5"]
+atlas = ExtResource("5_rs2wt")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8jgiv"]
+atlas = ExtResource("5_rs2wt")
+region = Rect2(256, 0, 128, 128)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_ljfoh"]
 atlas = ExtResource("1_ljfoh")
 region = Rect2(0, 0, 128, 128)
@@ -77,6 +93,10 @@ region = Rect2(768, 0, 128, 128)
 [sub_resource type="AtlasTexture" id="AtlasTexture_kxas1"]
 atlas = ExtResource("1_ljfoh")
 region = Rect2(896, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpteo"]
+atlas = ExtResource("1_tposp")
+region = Rect2(256, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0ledd"]
 atlas = ExtResource("3_m87cc")
@@ -129,7 +149,7 @@ region = Rect2(1408, 0, 128, 128)
 [sub_resource type="SpriteFrames" id="SpriteFrames_mjgyl"]
 animations = [{
 "frames": [{
-"duration": 0.3,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_7qeho")
 }, {
 "duration": 0.3,
@@ -170,6 +190,20 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_wok5y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hx1s5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8jgiv")
+}],
+"loop": true,
+"name": &"hurt",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_ljfoh")
 }, {
 "duration": 1.0,
@@ -195,6 +229,14 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jpteo")
+}],
+"loop": true,
+"name": &"throw",
 "speed": 5.0
 }, {
 "frames": [{
@@ -254,6 +296,25 @@ collision_mask = 15
 platform_floor_layers = 4294901762
 platform_wall_layers = 2
 script = ExtResource("1_m87cc")
+speed = null
+attack_range = null
+min_distance = null
+optimal_distance = null
+min_throw_range = null
+throw_range = null
+attack_duration = null
+damage = null
+attack_cooldown = null
+throw_cooldown = null
+throw_damage = null
+health = null
+gravity = null
+knockback_force = null
+knockback_up_force = null
+stun_duration = null
+knockback_delay = null
+bounce_effect = null
+axe_scene = ExtResource("2_ssfnl")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 light_mask = 31
@@ -261,7 +322,7 @@ visibility_layer = 31
 position = Vector2(4.999998, -50)
 scale = Vector2(3.8203123, 3.8203123)
 sprite_frames = SubResource("SpriteFrames_mjgyl")
-animation = &"attack"
+animation = &"hurt"
 flip_h = true
 
 [node name="Area2D_ataque" type="Area2D" parent="AnimatedSprite2D"]
@@ -288,3 +349,14 @@ scale = Vector2(3.8203123, 3.8203123)
 position = Vector2(0.52351856, 23.820042)
 scale = Vector2(0.99999917, 0.99999917)
 shape = SubResource("RectangleShape2D_m87cc")
+
+[node name="ThrowPoint" type="Node2D" parent="."]
+position = Vector2(-22, -23)
+
+[node name="punchSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_ssfnl")
+volume_db = 24.0
+
+[node name="throwAxe" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_rwkl7")
+volume_db = 24.0

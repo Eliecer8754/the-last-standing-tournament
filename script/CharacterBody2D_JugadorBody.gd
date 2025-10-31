@@ -45,7 +45,7 @@ var energy_ui: Array = []
 @onready var bottleSound: AudioStreamPlayer2D = $bottleSound
 @onready var HitPunchShound: AudioStreamPlayer2D = $HitPunchShound
 @onready var blockSound: AudioStreamPlayer2D = $blockSound  # Agregar este nodo
-
+@onready var takeDamageSound: AudioStreamPlayer2D = $takeDamageSound 
 # --- CONFIGURACIONES ---
 func set_hadouken_energy_checker(energy_checker):
 	can_cast_hadouken = energy_checker
@@ -125,7 +125,7 @@ func _physics_process(delta):
 			sprite.flip_h = true
 
 	# Salto solo si no está agachado ni bloqueando
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_crouching and not is_blocking:
+	if Input.is_action_just_pressed("jump") and is_on_floor() and not is_crouching and not is_blocking:
 		velocity.y = jump_speed
 
 	if not is_on_floor():
@@ -140,7 +140,6 @@ func _physics_process(delta):
 			punchSound.play()
 			attack("kick")
 		elif Input.is_action_just_pressed("hadouken"):
-			hadoukenSound.play()
 			await attack_hadouken()
 
 	# ACTUALIZAR ANIMACIÓN
@@ -193,7 +192,7 @@ func attack_hadouken() -> void:
 	if can_cast_hadouken != null and not can_cast_hadouken.call():
 		print("No hay energía para Hadouken!")
 		return
-
+	hadoukenSound.play()
 	is_attacking = true
 	sprite.play("hadouken")
 	cast_hadouken()
@@ -244,9 +243,10 @@ func _on_area_ataque_entered(area: Area2D):
 # --- DAÑO ---
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 	# Si está bloqueando, reducir el daño a 1/3
+	
 	var final_damage = amount
 	if is_blocking:
-		final_damage = ceil(amount / 3.0)  # Redondear hacia arriba
+		final_damage = ceil(amount / 6.0)  # Redondear hacia arriba
 		blockSound.play()  # Reproducir sonido de bloqueo
 		# Pequeño knockback incluso cuando bloquea (opcional)
 		var knockback_direction = (global_position - attacker_position).normalized()
@@ -255,6 +255,7 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 		print("¡Bloqueado! Daño reducido a: ", final_damage)
 	else:
 		# Aplicar knockback normal si no está bloqueando
+		takeDamageSound.play()
 		if attacker_position != Vector2.ZERO:
 			apply_knockback(attacker_position)
 

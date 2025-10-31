@@ -94,9 +94,9 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_pcbvp")
 theme_override_styles/fill = SubResource("StyleBoxFlat_pcbvp")
-max_value = 300.0
+max_value = 450.0
 step = 1.0
-value = 300.0
+value = 450.0
 metadata/_edit_use_anchors_ = true
 
 [node name="WinnerPanel" type="Panel" parent="CanvasLayer"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://bx2jtk50p3aho"]
+[gd_scene load_steps=43 format=3 uid="uid://bx2jtk50p3aho"]
 
 [ext_resource type="Script" uid="uid://brpf4xa72l7g5" path="res://script/CharacterBody2D_JugadorBody.gd" id="1_8ifni"]
 [ext_resource type="Texture2D" uid="uid://dgua5mskwh00d" path="res://characters/principal/idle.png" id="1_cd866"]
@@ -14,6 +14,8 @@
 [ext_resource type="AudioStream" uid="uid://d138ytr5phlgl" path="res://music/lightning-spell-386163.mp3" id="10_slkmv"]
 [ext_resource type="AudioStream" uid="uid://qw8gs0p2tq1p" path="res://music/level-up-05-326133.mp3" id="11_incs1"]
 [ext_resource type="AudioStream" uid="uid://3svu53xldygo" path="res://music/punch-04-383965.mp3" id="12_2yoym"]
+[ext_resource type="AudioStream" uid="uid://dn6i8pktx2p28" path="res://music/blocked.mp3" id="15_26dil"]
+[ext_resource type="AudioStream" uid="uid://cyxt0frv08xpq" path="res://music/young-man-being-hurt-95628.mp3" id="16_y4p33"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bw1rg"]
 atlas = ExtResource("3_w2n2v")
@@ -233,11 +235,10 @@ HadoukenScene = ExtResource("2_ewdpl")
 position = Vector2(-15.499992, -29.534494)
 scale = Vector2(4.2888875, 4.1843333)
 sprite_frames = SubResource("SpriteFrames_7fv0o")
-animation = &"block"
+animation = &"kick"
 flip_h = true
 
 [node name="Area2D_ataque" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D_ataque"]
 position = Vector2(60, -23)
@@ -288,3 +289,8 @@ position = Vector2(-216.5, -75)
 shape = SubResource("RectangleShape2D_td8pc")
 
 [node name="blockSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("15_26dil")
+
+[node name="takeDamageSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("16_y4p33")
+volume_db = 9.087

@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bjnjyb3qucumu"]
+
+[ext_resource type="Script" uid="uid://b0s2g53ss1kyr" path="res://script/axe_scene.gd" id="1_t8i4j"]
+[ext_resource type="Texture2D" uid="uid://chqop4gtx7x7i" path="res://img/axeMinotauro-removebg-preview.png" id="2_rwc13"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lvtkl"]
+size = Vector2(83.5, 184.5)
+
+[node name="AxeScene" type="Area2D"]
+script = ExtResource("1_t8i4j")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(1.0000038, 3.8146973e-06)
+scale = Vector2(0.53109455, 0.53109455)
+texture = ExtResource("2_rwc13")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(3.25, 0.25)
+shape = SubResource("RectangleShape2D_lvtkl")
