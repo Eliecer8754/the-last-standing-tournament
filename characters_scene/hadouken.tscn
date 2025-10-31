@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=3 uid="uid://vrijfr7pksat"]
+
+[ext_resource type="Script" uid="uid://bk5qhlccyxj22" path="res://characters_scene/hadouken.gd" id="1_aaf62"]
+[ext_resource type="Texture2D" uid="uid://c5jev2u0iduw7" path="res://characters/principal/hadouken-ball.png" id="1_fevq8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aaf62"]
+size = Vector2(226, 143)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_08ent"]
+atlas = ExtResource("1_fevq8")
+region = Rect2(0, 0, 258, 258)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ydnjq"]
+atlas = ExtResource("1_fevq8")
+region = Rect2(258, 0, 258, 258)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4ext"]
+atlas = ExtResource("1_fevq8")
+region = Rect2(0, 258, 258, 258)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2d5ve"]
+atlas = ExtResource("1_fevq8")
+region = Rect2(258, 258, 258, 258)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h0a63"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_08ent")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ydnjq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4ext")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2d5ve")
+}],
+"loop": true,
+"name": &"hadouken",
+"speed": 5.0
+}]
+
+[node name="ball" type="Area2D"]
+process_mode = 3
+script = ExtResource("1_aaf62")
+
+[node name="ball" type="CollisionShape2D" parent="."]
+position = Vector2(14, 1)
+shape = SubResource("RectangleShape2D_aaf62")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(255.99998, 0)
+scale = Vector2(1.2048737, 0.9122683)
+sprite_frames = SubResource("SpriteFrames_h0a63")
+animation = &"hadouken"
+offset = Vector2(-200, 0)
+flip_h = true

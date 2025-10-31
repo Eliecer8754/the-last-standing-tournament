@@ -1,0 +1,79 @@
+[gd_scene load_steps=11 format=3 uid="uid://14re25hrn0yf"]
+
+[ext_resource type="Texture2D" uid="uid://b1wb3u8bpi2ud" path="res://characters/wolf/Idle.png" id="1_fv4gx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fv4gx"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(0, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6trwa"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(128, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8rgm2"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(256, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ol4uw"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(384, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sbym6"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(512, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_btw7w"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(640, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2rpk5"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(768, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nmsm7"]
+atlas = ExtResource("1_fv4gx")
+region = Rect2(896, 64, 128, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvsp5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fv4gx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6trwa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8rgm2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ol4uw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sbym6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_btw7w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2rpk5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nmsm7")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="Wolf" type="Node2D"]
+
+[node name="nivel3Wolf" type="CharacterBody2D" parent="."]
+position = Vector2(580, 341)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="nivel3Wolf"]
+position = Vector2(2.9683113e-05, 73)
+scale = Vector2(4.429688, 4.2304683)
+sprite_frames = SubResource("SpriteFrames_jvsp5")
+animation = &"idle"
+flip_h = true

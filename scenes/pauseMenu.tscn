@@ -1,0 +1,92 @@
+[gd_scene load_steps=7 format=3 uid="uid://d114rirjdq81r"]
+
+[ext_resource type="Script" uid="uid://c1e7nchb0fw14" path="res://script/pause_menu.gd" id="1_bcaeg"]
+[ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="1_r5qvj"]
+[ext_resource type="Texture2D" uid="uid://famx87h7dicl" path="res://backgrounds/blankbutton.png" id="2_bcaeg"]
+
+[sub_resource type="FontVariation" id="FontVariation_8x1jc"]
+base_font = ExtResource("1_r5qvj")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3lcxj"]
+texture = ExtResource("2_bcaeg")
+expand_margin_left = 30.0
+expand_margin_top = 40.0
+expand_margin_right = 30.0
+expand_margin_bottom = 40.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bohxc"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bcaeg")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+modulate = Color(0, 0, 0, 0.70980394)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -81.5
+offset_top = -75.375
+offset_right = 81.5
+offset_bottom = 75.375
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+
+[node name="resume" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0, 1, 1, 1)
+theme_override_fonts/font = SubResource("FontVariation_8x1jc")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_bohxc")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bohxc")
+text = "Resume"
+
+[node name="exit" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0, 1, 1, 1)
+theme_override_fonts/font = SubResource("FontVariation_8x1jc")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_bohxc")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxTexture_3lcxj")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bohxc")
+text = "Exit"
+
+[connection signal="pressed" from="VBoxContainer/exit" to="." method="_on_exit_pressed"]

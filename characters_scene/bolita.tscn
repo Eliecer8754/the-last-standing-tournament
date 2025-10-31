@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://b6i00birttp3n"]
+
+[ext_resource type="Script" uid="uid://d4kulejw3aulx" path="res://Niveles/Nivel2/bolita.gd" id="1_6w6p1"]
+[ext_resource type="Texture2D" uid="uid://c36rp6torbnl5" path="res://img/2302.w056.n005.144B.p1.144-removebg-preview.png" id="2_iew1e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngqcp"]
+size = Vector2(93, 42)
+
+[node name="Bolita" type="Area2D"]
+script = ExtResource("1_6w6p1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(17.5, 4)
+shape = SubResource("RectangleShape2D_ngqcp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(17.75, 4.499998)
+scale = Vector2(0.09458077, 0.28859058)
+texture = ExtResource("2_iew1e")
+flip_h = true

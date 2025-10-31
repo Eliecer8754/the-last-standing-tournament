@@ -1,0 +1,122 @@
+[gd_scene load_steps=9 format=3 uid="uid://rehdbfdre6de"]
+
+[ext_resource type="Script" uid="uid://da537ymbdhtqr" path="res://script/nivel_2.gd" id="1_h8oj0"]
+[ext_resource type="Texture2D" uid="uid://dwfqj8hbhlh3t" path="res://backgrounds/bg1.tres" id="1_h54dx"]
+[ext_resource type="AudioStream" uid="uid://ukavqdevinny" path="res://music/tension-orchestral-music-113643.mp3" id="2_dpq6v"]
+[ext_resource type="PackedScene" uid="uid://bx2jtk50p3aho" path="res://characters_scene/principal.tscn" id="2_grnx3"]
+[ext_resource type="PackedScene" uid="uid://dqnusqpfsjb36" path="res://characters_scene/mago.tscn" id="3_grnx3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pcbvp"]
+size = Vector2(1867, 145)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pcbvp"]
+bg_color = Color(0.14117648, 0.14901961, 0.4627451, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_huf4r"]
+bg_color = Color(0.14901961, 0.15686275, 0.4745098, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 10.0
+expand_margin_top = 10.0
+expand_margin_right = 10.0
+expand_margin_bottom = 10.0
+
+[node name="Node2D_nivel2" type="Node2D"]
+script = ExtResource("1_h8oj0")
+PrincipalScene = ExtResource("2_grnx3")
+MagoScene = ExtResource("3_grnx3")
+
+[node name="Node2D_mundo" type="Node2D" parent="."]
+
+[node name="Sprite2D_fondo" type="Sprite2D" parent="Node2D_mundo"]
+position = Vector2(600, 374.50003)
+scale = Vector2(1.1999999, 1.8382689)
+texture = ExtResource("1_h54dx")
+
+[node name="StaticBody2D_piso" type="StaticBody2D" parent="Node2D_mundo"]
+
+[node name="CollisionShape2D_piso" type="CollisionShape2D" parent="Node2D_mundo/StaticBody2D_piso"]
+position = Vector2(554, 741)
+shape = SubResource("RectangleShape2D_pcbvp")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Node2D_mundo"]
+
+[node name="WinnerLabel" type="Label" parent="Node2D_mundo/CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 23.0
+metadata/_edit_use_anchors_ = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PlayerHealthBar" type="ProgressBar" parent="CanvasLayer"]
+offset_left = 40.0
+offset_top = 21.0
+offset_right = 273.0
+offset_bottom = 48.0
+theme_override_styles/background = SubResource("StyleBoxFlat_pcbvp")
+theme_override_styles/fill = SubResource("StyleBoxFlat_pcbvp")
+value = 100.0
+metadata/_edit_use_anchors_ = true
+
+[node name="RivalHealth" type="ProgressBar" parent="CanvasLayer"]
+offset_left = 894.0
+offset_top = 25.0
+offset_right = 1127.0
+offset_bottom = 52.0
+theme_override_styles/background = SubResource("StyleBoxFlat_pcbvp")
+theme_override_styles/fill = SubResource("StyleBoxFlat_pcbvp")
+max_value = 300.0
+step = 1.0
+value = 300.0
+metadata/_edit_use_anchors_ = true
+
+[node name="WinnerPanel" type="Panel" parent="CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+metadata/_edit_use_anchors_ = true
+
+[node name="WinnerLabel" type="Label" parent="CanvasLayer/WinnerPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4826389
+anchor_top = 0.48225307
+anchor_right = 0.5173611
+anchor_bottom = 0.5177469
+offset_left = 536.69446
+offset_top = 282.20987
+offset_right = 536.69446
+offset_bottom = 325.79013
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_huf4r")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/WinnerPanel"]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -2.425
+anchor_top = -0.675
+anchor_right = 4.375
+anchor_bottom = 2.9
+offset_left = -31.0
+offset_top = -8.0
+offset_right = 1183.0
+offset_bottom = 687.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.63529414)
+metadata/_edit_use_anchors_ = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_dpq6v")
+volume_db = 24.0
+autoplay = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(594, 372)
+scale = Vector2(-16.15899, 2.414016)
+zoom = Vector2(0.8, 0.8)

@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://ctajel5q186su"]
+
+[ext_resource type="Texture2D" uid="uid://dow33rgkie0p7" path="res://characters/caminarMujerPeleadora.png" id="1_moew2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gvc17"]
+atlas = ExtResource("1_moew2")
+region = Rect2(0, 0, 41, 106)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rqilo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gvc17")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="mujerPeleadora" type="Node2D"]
+
+[node name="mujerPeleadora" type="CharacterBody2D" parent="."]
+position = Vector2(580, 341)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="mujerPeleadora"]
+position = Vector2(-21.999985, -57.999992)
+scale = Vector2(3.8203123, 3.8203123)
+sprite_frames = SubResource("SpriteFrames_rqilo")
+animation = &"idle"
+flip_h = true

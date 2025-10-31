@@ -1,0 +1,230 @@
+[gd_scene load_steps=17 format=3 uid="uid://cx4qbudamv6gl"]
+
+[ext_resource type="Script" uid="uid://b2u2cw60c5l5y" path="res://script/settings.gd" id="1_3j6r5"]
+[ext_resource type="Texture2D" uid="uid://cd3x1v18owb1" path="res://backgrounds/The Last Standing.png" id="2_cj1lu"]
+[ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="3_71mqq"]
+[ext_resource type="Texture2D" uid="uid://c6hu3srbkn3qv" path="res://backgrounds/Untitled_design__1_-removebg-preview.png" id="5_es4n0"]
+[ext_resource type="Texture2D" uid="uid://famx87h7dicl" path="res://backgrounds/blankbutton.png" id="6_3j6r5"]
+
+[sub_resource type="FontVariation" id="FontVariation_yvmat"]
+base_font = ExtResource("3_71mqq")
+
+[sub_resource type="FontVariation" id="FontVariation_3lj6o"]
+base_font = ExtResource("3_71mqq")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6mhpt"]
+texture = ExtResource("6_3j6r5")
+expand_margin_left = 30.0
+expand_margin_top = 40.0
+expand_margin_right = 30.0
+expand_margin_bottom = 40.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_es4n0"]
+bg_color = Color(0, 0.7137255, 0.7019608, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0.7137255, 0.7019608, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cj1lu"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tk3m0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e0y8d"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iii5v"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xyjnm"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_enj72"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5ra0u"]
+
+[node name="settings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3j6r5")
+
+[node name="CanvasLayer" type="VBoxContainer" parent="."]
+z_index = 2
+layout_mode = 0
+offset_left = 439.0
+offset_top = 106.0
+offset_right = 719.0
+offset_bottom = 162.0
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_yvmat")
+theme_override_font_sizes/font_size = 34
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.7058824, 0.7058824, 0.7058824, 1)
+z_index = -2
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_cj1lu")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TextureRect3" type="TextureRect" parent="."]
+z_index = -2
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.038194444
+anchor_top = -0.021604938
+anchor_right = 1.0390625
+anchor_bottom = 1.0555556
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_es4n0")
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer3" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2638889
+anchor_top = 0.77623457
+anchor_right = 0.7395833
+anchor_bottom = 0.8611111
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 91
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="back" type="Button" parent="VBoxContainer3"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0, 1, 1, 1)
+theme_override_fonts/font = SubResource("FontVariation_3lj6o")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/hover = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxTexture_6mhpt")
+theme_override_styles/focus = SubResource("StyleBoxTexture_6mhpt")
+text = "back"
+
+[node name="sliders" type="VBoxContainer" parent="."]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.28125
+anchor_top = 0.27932099
+anchor_right = 0.5173611
+anchor_bottom = 0.63271606
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="sliders"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="sliders/VBoxContainer2"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_71mqq")
+text = "Game music"
+
+[node name="HSlider" type="HSlider" parent="sliders/VBoxContainer2"]
+layout_mode = 2
+theme_override_styles/slider = SubResource("StyleBoxFlat_es4n0")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_es4n0")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_es4n0")
+value = 100.0
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="sliders"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="sliders/VBoxContainer4"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_71mqq")
+text = "screen resolution"
+
+[node name="OptionButton" type="OptionButton" parent="sliders/VBoxContainer4"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_focus_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_pressed_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_hover_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_outline_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_fonts/font = ExtResource("3_71mqq")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_cj1lu")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_tk3m0")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cj1lu")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_e0y8d")
+theme_override_styles/hover = SubResource("StyleBoxFlat_cj1lu")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_iii5v")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_xyjnm")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_enj72")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5ra0u")
+selected = 1
+item_count = 2
+popup/item_0/text = "Full screen"
+popup/item_0/id = 0
+popup/item_1/text = "Window"
+popup/item_1/id = 1
+
+[node name="VBoxContainer5" type="VBoxContainer" parent="sliders"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="sliders/VBoxContainer5"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_71mqq")
+text = "Language"
+
+[node name="OptionButton" type="OptionButton" parent="sliders/VBoxContainer5"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_focus_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_pressed_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_hover_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_colors/font_outline_color = Color(0.13333334, 0.14117648, 0.3019608, 1)
+theme_override_fonts/font = ExtResource("3_71mqq")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_cj1lu")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_tk3m0")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cj1lu")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_e0y8d")
+theme_override_styles/hover = SubResource("StyleBoxFlat_cj1lu")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_iii5v")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_xyjnm")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_enj72")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5ra0u")
+
+[connection signal="pressed" from="VBoxContainer3/back" to="." method="_on_back_pressed"]
+[connection signal="item_selected" from="sliders/VBoxContainer4/OptionButton" to="." method="_on_option_button_item_selected_window"]
+[connection signal="item_selected" from="sliders/VBoxContainer5/OptionButton" to="." method="_on_option_button_item_selected"]

@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://d7yyuyxq41gp"]
+
+[ext_resource type="Script" uid="uid://c40p8b56sjui2" path="res://characters_scene/hadouken_bottle.gd" id="1_6rf81"]
+[ext_resource type="Texture2D" uid="uid://c3l07kao5p6sa" path="res://img/image-removebg-preview.png" id="1_vfm7c"]
+[ext_resource type="AudioStream" uid="uid://qw8gs0p2tq1p" path="res://music/level-up-05-326133.mp3" id="3_aymj0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6rf81"]
+size = Vector2(54, 57)
+
+[node name="HadoukenBottle" type="Area2D"]
+z_index = 12
+script = ExtResource("1_6rf81")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(7, 12.5)
+shape = SubResource("RectangleShape2D_6rf81")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(3, -7)
+scale = Vector2(0.38050008, 0.397)
+texture = ExtResource("1_vfm7c")
+
+[node name="bottleSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_aymj0")
+volume_db = 24.0
