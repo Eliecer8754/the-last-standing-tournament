@@ -2,6 +2,9 @@ extends Area2D
 
 @export var speed: float = 800
 @export var damage: int = 20
+@export var knockback_force: float = 1500  # Aumentado de ~800 a 1500
+@export var knockback_up_force: float = 800  # Aumentado de ~500 a 800
+@export var stun_duration: float = 0.6  # Stun más prolongado
 var direction: Vector2 = Vector2.RIGHT
 
 # Definir área de juego donde el Hadouken puede existir
@@ -40,8 +43,17 @@ func _on_area_entered(area: Area2D):
 		var enemigo = area.get_parent()
 		if enemigo.has_method("take_damage"):
 			enemigo.take_damage(damage, global_position)
+			# Aplicar knockback especial del Hadouken
+			if enemigo.has_method("apply_hadouken_knockback"):
+				enemigo.apply_hadouken_knockback(global_position, knockback_force, knockback_up_force, stun_duration)
 		queue_free()  # destruir al impactar
 
 # --- OPCIONAL: cambiar dirección ---
 func set_direction(new_dir: Vector2):
 	direction = new_dir.normalized()
+
+# --- CONFIGURAR PROPIEDADES DE KNOCKBACK ---
+func set_knockback(force: float, up_force: float, stun_time: float):
+	knockback_force = force
+	knockback_up_force = up_force
+	stun_duration = stun_time

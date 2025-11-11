@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://xsxbdx4p2vj7"]
+[gd_scene load_steps=15 format=3 uid="uid://xsxbdx4p2vj7"]
 
 [ext_resource type="Script" uid="uid://dnyhyjp0ve1m0" path="res://script/nivel_1_root.gd" id="1_rs3pg"]
 [ext_resource type="PackedScene" uid="uid://bx2jtk50p3aho" path="res://characters_scene/principal.tscn" id="2_huf4r"]
@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://bu36pmuyurf85" path="res://backgrounds/bg2.tres" id="4_huf4r"]
 [ext_resource type="PackedScene" uid="uid://d7yyuyxq41gp" path="res://characters_scene/HadoukenBottle.tscn" id="4_jom22"]
 [ext_resource type="AudioStream" uid="uid://ukavqdevinny" path="res://music/tension-orchestral-music-113643.mp3" id="5_huf4r"]
+[ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="6_hpk0g"]
+[ext_resource type="AudioStream" uid="uid://b8qn1vwk66ega" path="res://music/three-two-one-fight-deep-voice-38382.mp3" id="8_lq5cw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pcbvp"]
 size = Vector2(1684, 145)
@@ -18,6 +20,9 @@ size = Vector2(126.5, 1195.5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pcbvp"]
 bg_color = Color(0.14117648, 0.14901961, 0.4627451, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hpk0g"]
+bg_color = Color(0.6381096, 0.15449607, 0.27547282, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_huf4r"]
 bg_color = Color(0.14901961, 0.15686275, 0.4745098, 1)
@@ -92,11 +97,10 @@ anchor_right = 0.9670139
 anchor_bottom = 0.125
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_pcbvp")
-theme_override_styles/fill = SubResource("StyleBoxFlat_pcbvp")
-max_value = 450.0
+theme_override_styles/fill = SubResource("StyleBoxFlat_hpk0g")
+max_value = 400.0
 step = 1.0
-value = 450.0
+value = 400.0
 metadata/_edit_use_anchors_ = true
 
 [node name="WinnerPanel" type="Panel" parent="CanvasLayer"]
@@ -159,11 +163,32 @@ custom_minimum_size = Vector2(82, 0)
 layout_mode = 2
 color = Color(0.20392157, 0.827451, 0.8627451, 1)
 
+[node name="CountdownLabel" type="Label" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.924174, 0.15937293, 0.14565188, 1)
+theme_override_fonts/font = ExtResource("6_hpk0g")
+theme_override_font_sizes/font_size = 100
+
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("5_huf4r")
-volume_db = 24.0
+volume_db = 20.0
 autoplay = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(766, 208)
 zoom = Vector2(0.7, 0.7)
+
+[node name="tresdosuno" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_lq5cw")
+volume_db = 24.0
+autoplay = true

@@ -38,6 +38,8 @@ var can_cast_hadouken = null
 var current_hadouken_energy: int = 3
 var max_hadouken_energy: int = 3
 var energy_ui: Array = []
+@export var block_break_damage: int = 5  # Daño que atraviesa el bloqueo
+@export var block_stun_duration: float = 0.8  # Tiempo que aturde al jugador al romper bloqueo
 
 #sonidos
 @onready var punchSound: AudioStreamPlayer2D = $punchSound
@@ -200,6 +202,7 @@ func attack_hadouken() -> void:
 	is_attacking = false
 	_update_animation()
 
+# En el script del jugador, modifica la función cast_hadouken():
 func cast_hadouken():
 	if not HadoukenScene:
 		print("⚠️ HadoukenScene no está asignado")
@@ -224,6 +227,10 @@ func cast_hadouken():
 		if hadouken.has_node("AnimatedSprite2D"):
 			hadouken.get_node("AnimatedSprite2D").flip_h = false
 
+	# Configurar propiedades del Hadouken para más knockback
+	if hadouken.has_method("set_knockback"):
+		hadouken.set_knockback(400, 800, 0.6)  # fuerza, fuerza_vertical, stun
+
 	get_node("/root/Node2D_nivel1").add_child(hadouken)
 
 	print("✅ Hadouken lanzado en:", hadouken.global_position)
@@ -241,20 +248,45 @@ func _on_area_ataque_entered(area: Area2D):
 		punchSound.play()
 
 # --- DAÑO ---
-func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
-	# Si está bloqueando, reducir el daño a 1/3
-	
+func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO, is_block_breaker: bool = false):
 	var final_damage = amount
-	if is_blocking:
-		final_damage = ceil(amount / 6.0)  # Redondear hacia arriba
-		blockSound.play()  # Reproducir sonido de bloqueo
-		# Pequeño knockback incluso cuando bloquea (opcional)
+
+	if is_blocking and not is_block_breaker:
+		# Bloqueo normal - daño reducido
+		final_damage = ceil(amount / 2.0)
+		blockSound.play()
+
+		# Knockback reducido pero consistente
 		var knockback_direction = (global_position - attacker_position).normalized()
-		velocity.x = knockback_direction.x * (knockback_force * 0.3)  # 30% del knockback normal
-		velocity.y = -knockback_up_force * 0.2  # 20% del knockback vertical normal
-		print("¡Bloqueado! Daño reducido a: ", final_damage)
+		velocity.x = knockback_direction.x * (knockback_force * 0.5)
+		velocity.y = -knockback_up_force * 0.3
+
+		is_stunned = true
+		await get_tree().create_timer(stun_duration * 0.2).timeout
+		is_stunned = false
+
+	elif is_blocking and is_block_breaker:
+		# Ataque rompe-bloqueo - daño completo + stun
+		takeDamageSound.play()
+		final_damage = amount
+
+		# Knockback fuerte y stun prolongado
+		var knockback_direction = (global_position - attacker_position).normalized()
+		velocity.x = knockback_direction.x * knockback_force
+		velocity.y = -knockback_up_force * 0.8
+
+		is_stunned = true
+		# Animación especial de bloqueo roto
+		if sprite.sprite_frames.has_animation("block_break"):
+			sprite.play("block_break")
+		else:
+			sprite.play("hurt")
+
+		await get_tree().create_timer(block_stun_duration).timeout
+		is_stunned = false
+
 	else:
-		# Aplicar knockback normal si no está bloqueando
+		# Daño normal sin bloqueo
 		takeDamageSound.play()
 		if attacker_position != Vector2.ZERO:
 			apply_knockback(attacker_position)
@@ -267,6 +299,7 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 
 	if health <= 0:
 		emit_signal("player_defeated")
+
 
 func apply_knockback(attacker_position: Vector2):
 	var knockback_direction = (global_position - attacker_position).normalized()

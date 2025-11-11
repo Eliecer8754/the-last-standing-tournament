@@ -19,23 +19,31 @@ var rival: CharacterBody2D
 @onready var winner_panel: Panel = $CanvasLayer/WinnerPanel
 @onready var winner_label: Label = $CanvasLayer/WinnerPanel/WinnerLabel
 @onready var health_bar: ProgressBar = $CanvasLayer/PlayerHealthBar
-
+@onready var countdown_label: Label = $CanvasLayer/CountdownLabel
+#@onready var tresdosuno: AudioStreamPlayer2D = $tresdosuno
 @export var winner_display_time: float = 4.0
 
 # --- BOTELLITAS DINÁMICAS ---
 var minotauro_health_thresholds: Array = [70, 40, 10] # % vida donde aparece cada botellita
 var bottles_spawned_for_thresholds: Array = [false, false, false]
 
+# --- CONTROL DE INICIO ---
+var fight_started: bool = false
+
 func _ready():
 	AudioPlayer.stop_music()
 	winner_panel.visible = false
+	countdown_label.visible = false
 
 	# --- Instanciar jugador ---
 	if PrincipalScene:
 		player = PrincipalScene.instantiate()
 		add_child(player)
 		var player_y = get_floor_y(player_start_pos.x)
-		player.position = Vector2(player_start_pos.x, player_y)
+		player.position = Vector2(150, 480)
+
+		# Desactivar controles del jugador inicialmente
+		player.set_physics_process(false)
 
 		if "health_bar" in player:
 			player.health_bar = health_bar
@@ -58,7 +66,12 @@ func _ready():
 		rival = MinotauroScene.instantiate()
 		add_child(rival)
 		var rival_y = get_floor_y(rival_start_pos.x)
-		rival.position = Vector2(rival_start_pos.x, rival_y)
+		rival.position = Vector2(1300, 415)
+
+		# Desactivar IA del minotauro inicialmente
+		rival.set_physics_process(false)
+		if rival.has_method("set_active"):
+			rival.set_active(false)
 
 		if "player" in rival:
 			rival.player = player
@@ -73,6 +86,39 @@ func _ready():
 		if rival.has_signal("health_changed"):
 			rival.connect("health_changed", Callable(self, "_on_rival_health_changed"))
 
+	# Iniciar conteo regresivo
+	start_countdown()
+
+func start_countdown():
+	countdown_label.visible = true
+	
+	# Conteo 3
+	countdown_label.text = "3"
+	await get_tree().create_timer(1.0).timeout
+	
+	# Conteo 2
+	countdown_label.text = "2"
+	await get_tree().create_timer(1.0).timeout
+	
+	# Conteo 1
+	countdown_label.text = "1"
+	await get_tree().create_timer(1.0).timeout
+	
+	# ¡PELEA!
+	countdown_label.text = "¡PELEA!"
+	await get_tree().create_timer(0.5).timeout
+	
+	countdown_label.visible = false
+	
+	# Activar controles e IA
+	fight_started = true
+	if player:
+		player.set_physics_process(true)
+	if rival:
+		rival.set_physics_process(true)
+		if rival.has_method("set_active"):
+			rival.set_active(true)
+
 # --- CALCULO PISO ---
 func get_floor_y(_x_pos: float) -> float:
 	var piso = $Node2D_mundo/StaticBody2D_piso
@@ -84,12 +130,14 @@ func get_floor_y(_x_pos: float) -> float:
 
 # --- BOTELLITAS DINÁMICAS ---
 func _on_rival_health_changed(new_health: int, max_health: int):
+	if not fight_started:
+		return
+		
 	var health_percent = (new_health * 100) / max_health
 	for i in range(minotauro_health_thresholds.size()):
 		if health_percent <= minotauro_health_thresholds[i] and not bottles_spawned_for_thresholds[i]:
 			call_deferred("_spawn_bottle_near_rival")
 			bottles_spawned_for_thresholds[i] = true
-
 
 func _spawn_bottle_near_rival():
 	if not HadoukenBottleScene or not rival:
@@ -105,6 +153,16 @@ func _spawn_bottle_near_rival():
 func _show_winner(text: String):
 	winner_label.text = text
 	winner_panel.visible = true
+	
+	# Desactivar controles al terminar la pelea
+	fight_started = false
+	if player:
+		player.set_physics_process(false)
+	if rival:
+		rival.set_physics_process(false)
+		if rival.has_method("set_active"):
+			rival.set_active(false)
+	
 	get_tree().paused = true
 	var t = get_tree().create_timer(winner_display_time)
 	t.timeout.connect(Callable(self, "_return_to_levels"))

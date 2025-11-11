@@ -6,18 +6,18 @@ extends CharacterBody2D
 @export var min_distance: float = 100
 @export var optimal_distance: float = 250
 @export var min_throw_range: float = 250  # Distancia MÍNIMA para lanzar
-@export var throw_range: float = 500      # Distancia MÁXIMA para lanzar
+@export var throw_range: float = 1000      # Distancia MÁXIMA para lanzar
 # --- COMBAT PROPERTIES ---
 @export var attack_duration: float = 0.3
 @export var damage: int = 10
 @export var attack_cooldown: float = 2.4
 @export var throw_cooldown: float = 3.0
 @export var throw_damage: int = 15
-
 # --- HEALTH PROPERTIES ---
-@export var health: int = 450
+@export var health: int = 400
 var max_health: int
-
+@export var block_break_damage: int = 5  # Daño que atraviesa el bloqueo
+@export var block_stun_duration: float = 0.8  # Tiempo que aturde al jugador al romper bloqueo
 # --- PHYSICS PROPERTIES ---
 @export var gravity: float = 3000
 
@@ -79,7 +79,7 @@ func _ready():
 
 	area_dano.add_to_group("hurtbox_enemy")
 	area_dano.connect("area_entered", Callable(self, "_on_area_dano_entered"))
-	
+	sprite.play("idle")
 	# Crear detectores de paredes
 	setup_wall_detectors()
 
@@ -159,6 +159,9 @@ func find_player():
 # ===============================
 # DECISION MAKING - COMPLETAMENTE REVISADA
 # ===============================
+# ===============================
+# DECISION MAKING - MÁS AGRESIVA MANTENIENDO RANGO
+# ===============================
 func make_decision():
 	if is_attacking or is_throwing or is_stunned:
 		return
@@ -176,6 +179,9 @@ func make_decision():
 	var wall_near = wall_detector.is_colliding() if wall_detector else false
 	var wall_behind = wall_detector_retreat.is_colliding() if wall_detector_retreat else false
 
+	# NUEVO: Detectar si el jugador está bloqueando
+	var player_blocking = player.is_blocking if player else false
+
 	# DEBUG PRINTS
 	print("=== DECISIÓN ENEMIGO ===")
 	print("Distancia al jugador: ", distance)
@@ -184,42 +190,78 @@ func make_decision():
 	print("Min throw range: ", min_throw_range)
 	print("Pared cerca: ", wall_near)
 	print("Pared detrás: ", wall_behind)
+	print("Jugador bloqueando: ", player_blocking)
 	
-	# NUEVA LÓGICA SIMPLIFICADA Y EFECTIVA
-	if distance < min_distance and not wall_behind:
-		# Demasiado cerca - retroceder
+	# LÓGICA MEJORADA - MÁS AGRESIVA Y CON MÁS VARIEDAD
+	var random_choice = randf()
+	
+	# PRIORIDAD 1: Si está en rango de ataque cuerpo a cuerpo, atacar
+	if can_attack and distance <= attack_range and distance >= min_distance:
+		print("DECISIÓN: En rango de ataque cuerpo a cuerpo - ATACAR")
+		current_state = State.ATTACK
+		state_timer = attack_duration
+	
+	# PRIORIDAD 2: Si está demasiado cerca, retroceder
+	elif distance < min_distance and not wall_behind:
 		print("DECISIÓN: Demasiado cerca, retrocediendo")
 		current_state = State.RETREAT
 		state_timer = 1.0
+	
+	# PRIORIDAD 3: Si el jugador está bloqueando, comportamiento especial
+	elif player_blocking:
+		if distance <= attack_range and can_attack and random_choice < 0.7:
+			# 70% de probabilidad de ataque rompe-bloqueo
+			print("DECISIÓN: Jugador bloqueando - ataque agresivo")
+			current_state = State.ATTACK
+			state_timer = attack_duration
+		elif can_throw and distance >= min_throw_range and random_choice < 0.4:
+			# 40% de probabilidad de lanzar hacha contra bloqueo
+			print("DECISIÓN: Jugador bloqueando - lanzamiento")
+			current_state = State.THROW
+			state_timer = 2.0
+		else:
+			# Acercarse agresivamente
+			print("DECISIÓN: Jugador bloqueando - acercamiento agresivo")
+			current_state = State.APPROACH
+			state_timer = 1.0
+	
+	# PRIORIDAD 4: En rango de lanzamiento, pero con preferencia por acercarse
 	elif can_throw and distance >= min_throw_range and distance <= throw_range:
-		# En rango perfecto para lanzar
-		print("DECISIÓN: En rango de lanzamiento")
-		current_state = State.THROW
-		state_timer = 2.0
+		# Solo 25% de probabilidad de lanzar, 75% de acercarse
+		if random_choice < 0.25:
+			print("DECISIÓN: En rango de lanzamiento - LANZAR")
+			current_state = State.THROW
+			state_timer = 2.0
+		else:
+			# 75% de acercarse para ataque cuerpo a cuerpo
+			print("DECISIÓN: En rango de lanzamiento - pero prefiere acercarse")
+			current_state = State.APPROACH
+			state_timer = 1.0
+	
+	# PRIORIDAD 5: Demasiado lejos - acercarse
 	elif distance > throw_range:
-		# Demasiado lejos - acercarse
 		print("DECISIÓN: Demasiado lejos, acercándose")
 		current_state = State.APPROACH
 		state_timer = 1.0
-	elif can_attack and distance <= attack_range and distance >= min_distance:
-		# En rango de ataque cuerpo a cuerpo
-		print("DECISIÓN: Ataque cuerpo a cuerpo")
-		current_state = State.ATTACK
-		state_timer = attack_duration
+	
+	# PRIORIDAD 6: Comportamiento por defecto - siempre activo
 	else:
-		# Si está entre min_distance y min_throw_range, mantener distancia
-		if distance < min_throw_range and not wall_behind:
-			print("DECISIÓN: Muy cerca para lanzar, retrocediendo")
+		# Comportamiento aleatorio pero con fuerte tendencia a acercarse
+		if random_choice < 0.7:  # 70% de acercarse
+			print("DECISIÓN: Comportamiento por defecto - acercarse")
+			current_state = State.APPROACH
+			state_timer = 1.0
+		elif random_choice < 0.85:  # 15% de retroceder
+			print("DECISIÓN: Comportamiento por defecto - retroceder")
 			current_state = State.RETREAT
 			state_timer = 1.0
-		else:
+		else:  # 15% de mantenerse
 			print("DECISIÓN: Manteniendo posición")
 			current_state = State.IDLE
 			state_timer = 0.5
 	
 	print("Nuevo estado: ", State.keys()[current_state])
 	print("=========================")
-
 # ===============================
 # STATE EXECUTION - ACTUALIZADO
 # ===============================
@@ -271,6 +313,22 @@ func start_attack():
 	is_attacking = true
 	has_hit = false
 	can_attack = false
+
+	# Detectar si está cerca de una pared para aumentar probabilidad de rompe-bloqueo
+	var wall_near = wall_detector.is_colliding() if wall_detector else false
+	var is_block_breaker = false
+	var block_breaker_probability = 0.5  # Probabilidad base
+
+	# Si está cerca de una pared, aumentar probabilidad a 90%
+	if wall_near and player and player.is_blocking:
+		block_breaker_probability = 0.9
+		print("¡Cerca de pared! Probabilidad de rompe-bloqueo aumentada al 90%")
+
+	# Determinar si es un ataque rompe-bloqueo
+	if player and player.is_blocking and randf() < block_breaker_probability:
+		is_block_breaker = true
+		damage = block_break_damage  # Usar daño especial
+
 	sprite.play("attack")
 	area_ataque.monitoring = true
 
@@ -347,8 +405,23 @@ func _on_area_ataque_entered(area: Area2D):
 	if area.is_in_group("hurtbox_player"):
 		var jugador = area.get_parent()
 		if jugador.has_method("take_damage"):
-			jugador.take_damage(damage, global_position)
+			# Detectar si está cerca de una pared para aumentar probabilidad de rompe-bloqueo
+			var wall_near = wall_detector.is_colliding() if wall_detector else false
+			var is_block_breaker = false
+			var block_breaker_probability = 0.3  # Probabilidad base
+
+			# Si está cerca de una pared, aumentar probabilidad a 90%
+			if wall_near and jugador.is_blocking:
+				block_breaker_probability = 0.9
+				print("¡Cerca de pared en impacto! Probabilidad de rompe-bloqueo aumentada al 90%")
+
+			# Verificar si el jugador está bloqueando para determinar el tipo de ataque
+			if jugador.is_blocking and randf() < block_breaker_probability:
+				is_block_breaker = true
+
+			jugador.take_damage(damage, global_position, is_block_breaker)
 			has_hit = true
+
 
 # ===============================
 # DETECCIÓN DE DAÑO
@@ -398,6 +471,29 @@ func apply_knockback(attacker_position: Vector2):
 	move_and_slide()
 
 	await get_tree().create_timer(stun_duration).timeout
+	is_stunned = false
+	current_state = State.IDLE
+	
+	if is_on_floor():
+		sprite.play("idle")
+
+# Añade esta función en el script del minotauro (después de la función apply_knockback)
+func apply_hadouken_knockback(attack_position: Vector2, force: float, up_force: float, stun_time: float):
+	current_state = State.STUNNED
+	is_stunned = true
+	
+	if sprite.sprite_frames.has_animation("hurt"):
+		sprite.play("hurt")
+
+	await get_tree().create_timer(knockback_delay).timeout
+
+	var knockback_direction = (global_position - attack_position).normalized()
+	velocity.x = knockback_direction.x * force
+	velocity.y = -up_force
+
+	move_and_slide()
+
+	await get_tree().create_timer(stun_time).timeout
 	is_stunned = false
 	current_state = State.IDLE
 	
