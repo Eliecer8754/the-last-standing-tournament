@@ -256,7 +256,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ewdpl"]
-size = Vector2(155, 329)
+size = Vector2(139, 329)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_td8pc"]
 size = Vector2(167, 232)
@@ -269,25 +269,25 @@ HadoukenScene = ExtResource("2_ewdpl")
 position = Vector2(-15.499992, -29.534494)
 scale = Vector2(4.2888875, 4.1843333)
 sprite_frames = SubResource("SpriteFrames_7fv0o")
-animation = &"hurt"
+animation = &"idle"
 
 [node name="Area2D_ataque" type="Area2D" parent="."]
+visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D_ataque"]
 position = Vector2(60, -23)
 polygon = PackedVector2Array(-95, 150, -6, 157, -19, -171, -111, -176, -107, -123, -215, -125, -219, -65, -113, -67)
 
 [node name="HurtboxStanding" type="Area2D" parent="." groups=["hitbox_jugador"]]
-visible = false
 light_mask = 1023
 visibility_layer = 1048575
 position = Vector2(189, 104)
 collision_layer = 65535
 collision_mask = 255
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxStanding"]
-position = Vector2(-202.5, -138.5)
-shape = SubResource("RectangleShape2D_ewdpl")
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="HurtboxStanding"]
+position = Vector2(-210.5, -138.5)
+polygon = PackedVector2Array(-54.5, 152.5, -46.5, 131.5, -68.5, 66.5, -54.5, 2.5, -51.5, -31.5, -38.5, -44.5, -56.5, -106.5, -53.5, -152.5, -31.5, -158.5, -13.5, -154.5, 10.5, -169.5, 37.5, -163.5, 54.5, -136.5, 42.5, -121.5, 48.5, -83.5, 64.5, -41.5, 30.5, -24.5, 40.5, 28.5, 52.5, 60.5, 69.5, 97.5, 73.5, 153.5, 71.5, 163.5, 42.5, 163.5, -23.5, 168.5, -48.5, 166.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

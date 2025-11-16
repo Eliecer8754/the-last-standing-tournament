@@ -29,7 +29,7 @@ signal player_defeated
 var is_attacking: bool = false
 var is_stunned: bool = false
 var is_crouching: bool = false
-var is_blocking: bool = false  # Nuevo estado para bloquear
+var is_blocking: bool = false
 var original_speed: float = 0
 var was_in_air: bool = false
 
@@ -38,16 +38,17 @@ var can_cast_hadouken = null
 var current_hadouken_energy: int = 3
 var max_hadouken_energy: int = 3
 var energy_ui: Array = []
-@export var block_break_damage: int = 5  # Daño que atraviesa el bloqueo
-@export var block_stun_duration: float = 0.8  # Tiempo que aturde al jugador al romper bloqueo
+@export var block_break_damage: int = 5
+@export var block_stun_duration: float = 0.8
 
 #sonidos
 @onready var punchSound: AudioStreamPlayer2D = $punchSound
 @onready var hadoukenSound: AudioStreamPlayer2D = $hadoukenSound
 @onready var bottleSound: AudioStreamPlayer2D = $bottleSound
 @onready var HitPunchShound: AudioStreamPlayer2D = $HitPunchShound
-@onready var blockSound: AudioStreamPlayer2D = $blockSound  # Agregar este nodo
+@onready var blockSound: AudioStreamPlayer2D = $blockSound
 @onready var takeDamageSound: AudioStreamPlayer2D = $takeDamageSound 
+
 # --- CONFIGURACIONES ---
 func set_hadouken_energy_checker(energy_checker):
 	can_cast_hadouken = energy_checker
@@ -80,14 +81,16 @@ func _ready():
 	area_ataque.connect("area_entered", Callable(self, "_on_area_ataque_entered"))
 	original_speed = speed
 	
-	# Configurar hurtboxes
+	# Configurar hurtboxes - Estado inicial
 	if hurtbox_standing:
 		hurtbox_standing.add_to_group("hurtbox_player")
 		hurtbox_standing.add_to_group("player")
 		hurtbox_standing.monitoring = true
+		hurtbox_standing.monitorable = true
 	if hurtbox_crouching:
 		hurtbox_crouching.add_to_group("hurtbox_player")
 		hurtbox_crouching.monitoring = false
+		hurtbox_crouching.monitorable = false  # Inicialmente no detectable
 
 	if health_bar:
 		health_bar.max_value = health
@@ -104,14 +107,17 @@ func _physics_process(delta):
 	velocity.x = 0
 
 	# Manejar entrada de agacharse
+	var was_crouching = is_crouching
 	if Input.is_action_pressed("ui_down") and is_on_floor():
 		is_crouching = true
-		_update_hurtboxes()
 	else:
 		is_crouching = false
+
+	# Actualizar hurtboxes solo si cambió el estado de agachado
+	if was_crouching != is_crouching:
 		_update_hurtboxes()
 
-	# Manejar entrada de bloqueo (usando Shift por ejemplo)
+	# Manejar entrada de bloqueo
 	if Input.is_action_pressed("block") and is_on_floor() and not is_crouching and not is_attacking:
 		is_blocking = true
 	else:
@@ -155,6 +161,22 @@ func _physics_process(delta):
 	
 	was_in_air = not is_on_floor()
 
+# --- ACTUALIZAR HURTBOXES - CORREGIDO ---
+func _update_hurtboxes():
+	if hurtbox_standing and hurtbox_crouching:
+		if is_crouching:
+			# Modo agachado: standing OFF, crouching ON
+			hurtbox_standing.monitoring = false
+			hurtbox_standing.monitorable = false
+			hurtbox_crouching.monitoring = true
+			hurtbox_crouching.monitorable = true
+		else:
+			# Modo parado: standing ON, crouching OFF  
+			hurtbox_standing.monitoring = true
+			hurtbox_standing.monitorable = true
+			hurtbox_crouching.monitoring = false
+			hurtbox_crouching.monitorable = false
+
 # --- ACTUALIZAR ANIMACIÓN ---
 func _update_animation():
 	if is_stunned:
@@ -173,12 +195,6 @@ func _update_animation():
 		sprite.play("walk")
 	else:
 		sprite.play("idle")
-
-# --- ACTUALIZAR HURTBOXES ---
-func _update_hurtboxes():
-	if hurtbox_standing and hurtbox_crouching:
-		hurtbox_standing.monitoring = not is_crouching
-		hurtbox_crouching.monitoring = is_crouching
 
 # --- ATAQUE ---
 func attack(anim: String):
@@ -202,7 +218,6 @@ func attack_hadouken() -> void:
 	is_attacking = false
 	_update_animation()
 
-# En el script del jugador, modifica la función cast_hadouken():
 func cast_hadouken():
 	if not HadoukenScene:
 		print("⚠️ HadoukenScene no está asignado")
@@ -229,10 +244,9 @@ func cast_hadouken():
 
 	# Configurar propiedades del Hadouken para más knockback
 	if hadouken.has_method("set_knockback"):
-		hadouken.set_knockback(400, 800, 0.6)  # fuerza, fuerza_vertical, stun
+		hadouken.set_knockback(400, 800, 0.6)
 
-	get_node("/root/Node2D_nivel1").add_child(hadouken)
-
+	get_tree().current_scene.add_child(hadouken)
 	print("✅ Hadouken lanzado en:", hadouken.global_position)
 
 # --- AREA ATAQUE ---
@@ -250,9 +264,10 @@ func _on_area_ataque_entered(area: Area2D):
 # --- DAÑO ---
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO, is_block_breaker: bool = false):
 	var final_damage = amount
-
-	if is_blocking and not is_block_breaker:
-		# Bloqueo normal - daño reducido
+	
+	# LOS MISILES AÉREOS SON UNBLOCKABLE - siempre pasan el bloqueo
+	if is_blocking and not is_block_breaker and not is_unblockable_attack(attacker_position):
+		# Bloqueo normal - daño reducido (solo para ataques bloqueables)
 		final_damage = ceil(amount / 2.0)
 		blockSound.play()
 
@@ -265,10 +280,11 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO, is_bloc
 		await get_tree().create_timer(stun_duration * 0.2).timeout
 		is_stunned = false
 
-	elif is_blocking and is_block_breaker:
-		# Ataque rompe-bloqueo - daño completo + stun
+	elif is_blocking and (is_block_breaker or is_unblockable_attack(attacker_position)):
+		# Ataque rompe-bloqueo o unblockable - daño completo + stun
 		takeDamageSound.play()
 		final_damage = amount
+		print("🛡️ ¡BLOQUEO ROTO! Ataque no bloqueable")
 
 		# Knockback fuerte y stun prolongado
 		var knockback_direction = (global_position - attacker_position).normalized()
@@ -300,6 +316,15 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO, is_bloc
 	if health <= 0:
 		emit_signal("player_defeated")
 
+# Nueva función para detectar ataques no bloqueables
+func is_unblockable_attack(attacker_position: Vector2) -> bool:
+	# Detectar misiles aéreos por su posición (vienen desde arriba)
+	if attacker_position != Vector2.ZERO:
+		var attack_direction = (global_position - attacker_position).normalized()
+		# Si el ataque viene principalmente desde arriba, es probablemente un misil aéreo
+		if attack_direction.y < -0.7:  # Viene desde arriba
+			return true
+	return false
 
 func apply_knockback(attacker_position: Vector2):
 	var knockback_direction = (global_position - attacker_position).normalized()

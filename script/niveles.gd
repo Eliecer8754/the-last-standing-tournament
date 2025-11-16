@@ -24,8 +24,7 @@ var nivel_seleccionado: int = 0
 # Pre-carga de enemigos
 @onready var minotauro = preload("res://characters_scene/minotauro.tscn")
 @onready var mago = preload("res://characters_scene/mago.tscn")
-@onready var wolf = preload("res://characters_scene/wolf.tscn")
-@onready var mujerPeleadora = preload("res://characters_scene/mujer_peleadora.tscn")
+@onready var vegueta = preload("res://characters_scene/vegueta.tscn")
 
 # Rival instanciado
 var rival: Node2D = null
@@ -182,7 +181,7 @@ func _on_BotonNivel2_pressed():
 
 func _on_BotonNivel3_pressed():
 	nivel_seleccionado = 3
-	seleccionar_rival(wolf, "wolf", Vector2(0, 0), "nivel3Wolf/AnimatedSprite2D")
+	seleccionar_rival(vegueta, "vegueta", Vector2(560, 400), "nivel3Vegueta/AnimatedSprite2D")
 
 func _on_back_pressed():
 	get_tree().change_scene_to_file("res://scenes/menu_de_juego.tscn")

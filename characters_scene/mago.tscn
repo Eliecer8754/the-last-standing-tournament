@@ -1,8 +1,10 @@
-[gd_scene load_steps=38 format=3 uid="uid://dqnusqpfsjb36"]
+[gd_scene load_steps=45 format=3 uid="uid://dqnusqpfsjb36"]
 
 [ext_resource type="Texture2D" uid="uid://d1boo4gv1m26c" path="res://characters/Wanderer Magican/Idle.png" id="1_0bxaq"]
 [ext_resource type="Script" uid="uid://mjfwvy5ji3al" path="res://characters_scene/characterBody2D_mago.gd" id="1_mtb12"]
+[ext_resource type="PackedScene" uid="uid://bbqy0axfuohnl" path="res://Niveles/Nivel2/MisilAereo.tscn" id="2_3ta5e"]
 [ext_resource type="Texture2D" uid="uid://bq3ch4na5ec0j" path="res://characters/Wanderer Magican/Attack_1.png" id="2_mtb12"]
+[ext_resource type="PackedScene" uid="uid://b6i00birttp3n" path="res://characters_scene/bolita.tscn" id="2_nsdbf"]
 [ext_resource type="Texture2D" uid="uid://d1vwargbmyjcc" path="res://characters/Wanderer Magican/Walk.png" id="3_hsfud"]
 [ext_resource type="Texture2D" uid="uid://2c7275y3khq0" path="res://characters/Wanderer Magican/Jump.png" id="4_mtb12"]
 
@@ -98,6 +100,18 @@ region = Rect2(768, 0, 128, 128)
 atlas = ExtResource("4_mtb12")
 region = Rect2(896, 0, 128, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_s8nnn"]
+atlas = ExtResource("2_mtb12")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lknd3"]
+atlas = ExtResource("2_mtb12")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cmmmy"]
+atlas = ExtResource("2_mtb12")
+region = Rect2(256, 0, 128, 128)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_2wwyh"]
 atlas = ExtResource("3_hsfud")
 region = Rect2(0, 0, 128, 128)
@@ -157,6 +171,11 @@ animations = [{
 "frames": [],
 "loop": true,
 "name": &"die",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"hurt",
 "speed": 5.0
 }, {
 "frames": [{
@@ -219,6 +238,20 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_s8nnn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lknd3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cmmmy")
+}],
+"loop": true,
+"name": &"throw",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_2wwyh")
 }, {
 "duration": 1.0,
@@ -244,15 +277,23 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_m87cc"]
-size = Vector2(131, 334)
+[sub_resource type="CircleShape2D" id="CircleShape2D_mtb12"]
+radius = 124.036285
 
-[node name="characterBody2D_mago" type="CharacterBody2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nsdbf"]
+size = Vector2(82, 257)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3ta5e"]
+size = Vector2(167, 265)
+
+[node name="Mago" type="CharacterBody2D"]
 collision_layer = 3
 collision_mask = 15
 platform_floor_layers = 4294901762
 platform_wall_layers = 2
 script = ExtResource("1_mtb12")
+MisilAereoScene = ExtResource("2_3ta5e")
+poder_mago_scene = ExtResource("2_nsdbf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 light_mask = 31
@@ -260,30 +301,30 @@ visibility_layer = 31
 position = Vector2(4.999998, -50)
 scale = Vector2(3.8203123, 3.8203123)
 sprite_frames = SubResource("SpriteFrames_mjgyl")
-animation = &"attack"
+animation = &"throw"
 flip_h = true
 
-[node name="Area2D_dano" type="Area2D" parent="AnimatedSprite2D"]
+[node name="ataqueMagico" type="Area2D" parent="."]
 visible = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatedSprite2D/Area2D_dano"]
-visible = false
-position = Vector2(-24, -23)
-shape = SubResource("RectangleShape2D_m87cc")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ataqueMagico"]
+position = Vector2(-58, -22)
+shape = SubResource("CircleShape2D_mtb12")
 
-[node name="Area2D_ataque" type="Area2D" parent="AnimatedSprite2D"]
+[node name="cuerpo" type="CollisionShape2D" parent="."]
+position = Vector2(73, 68)
+shape = SubResource("RectangleShape2D_nsdbf")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="AnimatedSprite2D/Area2D_ataque"]
-position = Vector2(60, -23)
-polygon = PackedVector2Array(-95, 150, -6, 157, -19, -171, -111, -176, -107, -123, -215, -125, -219, -65, -113, -67)
+[node name="HurtboxStanding" type="Area2D" parent="." groups=["hitbox_jugador"]]
+light_mask = 1023
+visibility_layer = 1048575
+position = Vector2(189, 104)
+collision_layer = 65535
+collision_mask = 255
 
-[node name="Area2D_ataque" type="Area2D" parent="."]
-visible = false
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxStanding"]
+position = Vector2(-179.5, -40.5)
+shape = SubResource("RectangleShape2D_3ta5e")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D_ataque"]
-visible = false
-polygon = PackedVector2Array(-97, -58, 58, -58, 60, 191, -74, 202, -74, 122, -224, 144, -227, 113, -91, 95)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(21.5, 26)
-shape = SubResource("RectangleShape2D_m87cc")
+[node name="ThrowPoint" type="Node2D" parent="."]
+position = Vector2(-135, 54)

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbqy0axfuohnl"]
+
+[ext_resource type="Script" uid="uid://mxq0tunitlk5" path="res://Niveles/Nivel2/misil_aereo.gd" id="1_5kd68"]
+[ext_resource type="Texture2D" uid="uid://dc3xay78o680x" path="res://img/MisilAereo.png" id="2_7om4s"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yohyt"]
+size = Vector2(94, 14)
+
+[node name="MisilAereo" type="Area2D"]
+script = ExtResource("1_5kd68")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(3.8146973e-06, 2.3841858e-07)
+scale = Vector2(3.5, 3.5)
+texture = ExtResource("2_7om4s")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_yohyt")

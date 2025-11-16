@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cyls1cxofx6rw"]
+
+[ext_resource type="Texture2D" uid="uid://b3iaqirjlocnc" path="res://img/dark_energy_ball_28_by_venjix5_dd1pr6p-fullview.png" id="1_wcauq"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cnc70"]
+radius = 8205.026
+
+[node name="HenkiDama" type="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_cnc70")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(164, -140.00002)
+scale = Vector2(23.715076, 23.715069)
+texture = ExtResource("1_wcauq")

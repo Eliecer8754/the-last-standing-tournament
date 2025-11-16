@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4q2io2fqxs2e"
-path="res://.godot/imported/nova_sprites_by_gabrielmouzo-d8trqb7.png-633da332612835a8bf7b10663d4dcc38.ctex"
+uid="uid://v52nru4apbe0"
+path="res://.godot/imported/bolita_mago.png-3b16e542cc734314a2229deef441fc4f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://characters/nova_sprites_by_gabrielmouzo-d8trqb7.png"
-dest_files=["res://.godot/imported/nova_sprites_by_gabrielmouzo-d8trqb7.png-633da332612835a8bf7b10663d4dcc38.ctex"]
+source_file="res://img/bolita_mago.png"
+dest_files=["res://.godot/imported/bolita_mago.png-3b16e542cc734314a2229deef441fc4f.ctex"]
 
 [params]
 

@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var PrincipalScene: PackedScene
-@export var MinotauroScene: PackedScene
+@export var RivalScene: PackedScene  # Cambiado a genérico para cualquier rival
 @export var HadoukenBottleScene: PackedScene
 
 # --- ENERGÍA HADOUKEN ---
@@ -20,15 +20,17 @@ var rival: CharacterBody2D
 @onready var winner_label: Label = $CanvasLayer/WinnerPanel/WinnerLabel
 @onready var health_bar: ProgressBar = $CanvasLayer/PlayerHealthBar
 @onready var countdown_label: Label = $CanvasLayer/CountdownLabel
-#@onready var tresdosuno: AudioStreamPlayer2D = $tresdosuno
 @export var winner_display_time: float = 4.0
 
 # --- BOTELLITAS DINÁMICAS ---
-var minotauro_health_thresholds: Array = [70, 40, 10] # % vida donde aparece cada botellita
+var rival_health_thresholds: Array = [70, 40, 10] # % vida donde aparece cada botellita
 var bottles_spawned_for_thresholds: Array = [false, false, false]
 
 # --- CONTROL DE INICIO ---
 var fight_started: bool = false
+
+# Variable para controlar el estado del juego
+var game_ended: bool = false
 
 func _ready():
 	AudioPlayer.stop_music()
@@ -39,7 +41,6 @@ func _ready():
 	if PrincipalScene:
 		player = PrincipalScene.instantiate()
 		add_child(player)
-		var player_y = get_floor_y(player_start_pos.x)
 		player.position = Vector2(150, 480)
 
 		# Desactivar controles del jugador inicialmente
@@ -61,24 +62,26 @@ func _ready():
 					bars.append(bar)
 			player.set_energy_ui(bars)
 
-	# --- Instanciar Minotauro ---
-	if MinotauroScene:
-		rival = MinotauroScene.instantiate()
+	# --- Instanciar Rival (Mago) ---
+	if RivalScene:
+		rival = RivalScene.instantiate()
 		add_child(rival)
-		var rival_y = get_floor_y(rival_start_pos.x)
 		rival.position = Vector2(1300, 415)
 
-		# Desactivar IA del minotauro inicialmente
+		# Desactivar IA del rival inicialmente
 		rival.set_physics_process(false)
 		if rival.has_method("set_active"):
 			rival.set_active(false)
 
+		# Asignar el jugador como objetivo del rival
 		if "player" in rival:
 			rival.player = player
 
+		# Configurar barra de salud del rival
 		if "health_bar" in rival:
 			rival.health_bar = $CanvasLayer/RivalHealth
 
+		# Conectar señales del rival
 		if rival.has_signal("enemy_defeated"):
 			rival.connect("enemy_defeated", Callable(self, "_on_enemy_defeated"))
 
@@ -130,19 +133,19 @@ func get_floor_y(_x_pos: float) -> float:
 
 # --- BOTELLITAS DINÁMICAS ---
 func _on_rival_health_changed(new_health: int, max_health: int):
-	if not fight_started:
+	if not fight_started or game_ended:
 		return
 		
 	var health_percent = (new_health * 100) / max_health
-	for i in range(minotauro_health_thresholds.size()):
-		if health_percent <= minotauro_health_thresholds[i] and not bottles_spawned_for_thresholds[i]:
+	for i in range(rival_health_thresholds.size()):
+		if health_percent <= rival_health_thresholds[i] and not bottles_spawned_for_thresholds[i]:
 			call_deferred("_spawn_bottle_near_rival")
 			bottles_spawned_for_thresholds[i] = true
 
 func _spawn_bottle_near_rival():
-	if not HadoukenBottleScene or not rival:
+	if not HadoukenBottleScene or not rival or game_ended:
 		return
-	var offset = Vector2(randi_range(-100, 100), -300)  # Botellita alrededor del rival
+	var offset = Vector2(randi_range(-100, 100), -100)
 	var bottle = HadoukenBottleScene.instantiate()
 	bottle.position = rival.global_position + offset
 	add_child(bottle)
@@ -151,6 +154,10 @@ func _spawn_bottle_near_rival():
 
 # --- GANADOR ---
 func _show_winner(text: String):
+	if game_ended:
+		return
+		
+	game_ended = true
 	winner_label.text = text
 	winner_panel.visible = true
 	
@@ -163,18 +170,29 @@ func _show_winner(text: String):
 		if rival.has_method("set_active"):
 			rival.set_active(false)
 	
-	get_tree().paused = true
-	var t = get_tree().create_timer(winner_display_time)
-	t.timeout.connect(Callable(self, "_return_to_levels"))
+	# Usar call_deferred para evitar problemas con el árbol de escenas
+	call_deferred("_start_winner_timer")
+
+func _start_winner_timer():
+	# Crear el temporizador de manera segura
+	var timer = get_tree().create_timer(winner_display_time)
+	if timer:
+		timer.timeout.connect(Callable(self, "_return_to_levels"), CONNECT_ONE_SHOT)
 
 func _on_player_defeated():
-	_show_winner("🏆 MINOTAURO GANA!")
+	_show_winner("🏆 " + rival.name + " GANA!")
 
 func _on_enemy_defeated():
 	_show_winner("🏆 JUGADOR GANA!")
 
 func _return_to_levels():
-	get_tree().paused = false
-	var success = get_tree().change_scene_to_file("res://scenes/niveles.tscn")
-	if not success:
-		print("Error al cargar la escena")
+	# Verificar que todavía estamos en el árbol de escenas
+	if not is_inside_tree():
+		return
+	
+	# Cambiar a la escena de niveles de manera segura
+	var tree = get_tree()
+	if tree and not tree.paused:
+		var success = tree.change_scene_to_file("res://scenes/niveles.tscn")
+		if not success:
+			print("Error al cargar la escena de niveles")

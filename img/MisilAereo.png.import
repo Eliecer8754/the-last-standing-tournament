@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dbo1hjxdmc6nl"
-path="res://.godot/imported/Run+Attack.png-2759f8217284e2fefd0556bd87825956.ctex"
+uid="uid://dc3xay78o680x"
+path="res://.godot/imported/MisilAereo.png-c5c7b0846badf5d98cde13483f877fc3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://characters/wolf/Run+Attack.png"
-dest_files=["res://.godot/imported/Run+Attack.png-2759f8217284e2fefd0556bd87825956.ctex"]
+source_file="res://img/MisilAereo.png"
+dest_files=["res://.godot/imported/MisilAereo.png-c5c7b0846badf5d98cde13483f877fc3.ctex"]
 
 [params]
 

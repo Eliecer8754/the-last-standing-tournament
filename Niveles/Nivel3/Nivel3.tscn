@@ -1,22 +1,22 @@
-[gd_scene load_steps=15 format=3 uid="uid://xsxbdx4p2vj7"]
+[gd_scene load_steps=15 format=3 uid="uid://bq6k3nvdp2yod"]
 
-[ext_resource type="Script" uid="uid://dnyhyjp0ve1m0" path="res://script/nivel_1_root.gd" id="1_rs3pg"]
-[ext_resource type="PackedScene" uid="uid://bx2jtk50p3aho" path="res://characters_scene/principal.tscn" id="2_huf4r"]
-[ext_resource type="PackedScene" uid="uid://c5a22uw7o2v2v" path="res://characters_scene/minotauro.tscn" id="3_jom22"]
-[ext_resource type="Texture2D" uid="uid://bu36pmuyurf85" path="res://backgrounds/bg2.tres" id="4_huf4r"]
-[ext_resource type="PackedScene" uid="uid://d7yyuyxq41gp" path="res://characters_scene/HadoukenBottle.tscn" id="4_jom22"]
-[ext_resource type="AudioStream" uid="uid://ukavqdevinny" path="res://music/tension-orchestral-music-113643.mp3" id="5_huf4r"]
-[ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="6_hpk0g"]
-[ext_resource type="AudioStream" uid="uid://b8qn1vwk66ega" path="res://music/three-two-one-fight-deep-voice-38382.mp3" id="8_lq5cw"]
+[ext_resource type="Script" uid="uid://dnyhyjp0ve1m0" path="res://script/nivel_1_root.gd" id="1_yodhl"]
+[ext_resource type="PackedScene" uid="uid://bx2jtk50p3aho" path="res://characters_scene/principal.tscn" id="2_q1gpb"]
+[ext_resource type="PackedScene" uid="uid://cir82fwlqltfy" path="res://characters_scene/vegueta.tscn" id="3_alitk"]
+[ext_resource type="PackedScene" uid="uid://d7yyuyxq41gp" path="res://characters_scene/HadoukenBottle.tscn" id="4_myuj2"]
+[ext_resource type="Texture2D" uid="uid://bu36pmuyurf85" path="res://backgrounds/bg2.tres" id="5_55sim"]
+[ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="6_eso45"]
+[ext_resource type="AudioStream" uid="uid://ukavqdevinny" path="res://music/tension-orchestral-music-113643.mp3" id="7_6rh1y"]
+[ext_resource type="AudioStream" uid="uid://b8qn1vwk66ega" path="res://music/three-two-one-fight-deep-voice-38382.mp3" id="8_c0bbh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pcbvp"]
 size = Vector2(1684, 145)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_huf4r"]
-size = Vector2(127.5, 1156)
+size = Vector2(127.5, 1351)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jom22"]
-size = Vector2(126.5, 1195.5)
+size = Vector2(126.5, 1344.75)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pcbvp"]
 bg_color = Color(0.14117648, 0.14901961, 0.4627451, 1)
@@ -36,17 +36,17 @@ expand_margin_right = 10.0
 expand_margin_bottom = 10.0
 
 [node name="Node2D_nivel1" type="Node2D"]
-script = ExtResource("1_rs3pg")
-PrincipalScene = ExtResource("2_huf4r")
-RivalScene = ExtResource("3_jom22")
-HadoukenBottleScene = ExtResource("4_jom22")
+script = ExtResource("1_yodhl")
+PrincipalScene = ExtResource("2_q1gpb")
+RivalScene = ExtResource("3_alitk")
+HadoukenBottleScene = ExtResource("4_myuj2")
 
 [node name="Node2D_mundo" type="Node2D" parent="."]
 
 [node name="Sprite2D_fondo" type="Sprite2D" parent="Node2D_mundo"]
 position = Vector2(747.5, 226)
 scale = Vector2(2.8426967, 4.714286)
-texture = ExtResource("4_huf4r")
+texture = ExtResource("5_55sim")
 
 [node name="StaticBody2D_piso" type="StaticBody2D" parent="Node2D_mundo"]
 position = Vector2(-59, -252)
@@ -59,14 +59,14 @@ shape = SubResource("RectangleShape2D_pcbvp")
 position = Vector2(-59, -252)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D_mundo/StaticBody2D"]
-position = Vector2(-3, 396)
+position = Vector2(-3, 298.5)
 shape = SubResource("RectangleShape2D_huf4r")
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="Node2D_mundo"]
 position = Vector2(-59, -252)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D_mundo/StaticBody2D2"]
-position = Vector2(1619, 376)
+position = Vector2(1619, 301.375)
 shape = SubResource("RectangleShape2D_jom22")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Node2D_mundo"]
@@ -176,11 +176,11 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.924174, 0.15937293, 0.14565188, 1)
-theme_override_fonts/font = ExtResource("6_hpk0g")
+theme_override_fonts/font = ExtResource("6_eso45")
 theme_override_font_sizes/font_size = 100
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("5_huf4r")
+stream = ExtResource("7_6rh1y")
 volume_db = 20.0
 autoplay = true
 
@@ -189,6 +189,6 @@ position = Vector2(766, 208)
 zoom = Vector2(0.7, 0.7)
 
 [node name="tresdosuno" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("8_lq5cw")
+stream = ExtResource("8_c0bbh")
 volume_db = 24.0
 autoplay = true

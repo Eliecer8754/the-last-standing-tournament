@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://by2hypb6bx3gy"
-path="res://.godot/imported/Attack_1.png-604aac64fd5a1482c5da53e53fe4d426.ctex"
+uid="uid://b3iaqirjlocnc"
+path="res://.godot/imported/dark_energy_ball_28_by_venjix5_dd1pr6p-fullview.png-efb8f4b1efb41f59ab827ef9c8a27e5f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://characters/wolf/Attack_1.png"
-dest_files=["res://.godot/imported/Attack_1.png-604aac64fd5a1482c5da53e53fe4d426.ctex"]
+source_file="res://img/dark_energy_ball_28_by_venjix5_dd1pr6p-fullview.png"
+dest_files=["res://.godot/imported/dark_energy_ball_28_by_venjix5_dd1pr6p-fullview.png-efb8f4b1efb41f59ab827ef9c8a27e5f.ctex"]
 
 [params]
 
