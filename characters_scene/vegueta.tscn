@@ -1,7 +1,8 @@
-[gd_scene load_steps=28 format=3 uid="uid://cir82fwlqltfy"]
+[gd_scene load_steps=32 format=3 uid="uid://cir82fwlqltfy"]
 
 [ext_resource type="Texture2D" uid="uid://me1gi557ngam" path="res://characters/Char_3.png" id="1_f8agp"]
 [ext_resource type="Script" uid="uid://c0wmax3g1f4rn" path="res://characters_scene/vegueta.gd" id="1_hdj8j"]
+[ext_resource type="PackedScene" uid="uid://cyls1cxofx6rw" path="res://Niveles/Nivel3/henkiDama.tscn" id="2_2yph3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdj8j"]
 atlas = ExtResource("1_f8agp")
@@ -19,10 +20,6 @@ region = Rect2(128, 64, 64, 64)
 atlas = ExtResource("1_f8agp")
 region = Rect2(448, 192, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pkehf"]
-atlas = ExtResource("1_f8agp")
-region = Rect2(192, 320, 64, 64)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_l35ax"]
 atlas = ExtResource("1_f8agp")
 region = Rect2(0, 320, 64, 64)
@@ -34,6 +31,22 @@ region = Rect2(64, 320, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_a1r6l"]
 atlas = ExtResource("1_f8agp")
 region = Rect2(128, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pkehf"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(192, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1v8e0"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(192, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26a0s"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(256, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ndc1f"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(320, 320, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c0g2j"]
 atlas = ExtResource("1_f8agp")
@@ -123,9 +136,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_pkehf")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_l35ax")
 }, {
 "duration": 1.0,
@@ -133,9 +143,31 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_a1r6l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pkehf")
 }],
 "loop": true,
-"name": &"henkiDama",
+"name": &"henki_charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1v8e0")
+}],
+"loop": true,
+"name": &"henki_finish",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26a0s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ndc1f")
+}],
+"loop": true,
+"name": &"henki_finish_frame",
 "speed": 5.0
 }, {
 "frames": [{
@@ -233,6 +265,8 @@ collision_mask = 15
 platform_floor_layers = 4294901762
 platform_wall_layers = 2
 script = ExtResource("1_hdj8j")
+henki_dama_scene = ExtResource("2_2yph3")
+henki_dama_damage = 15
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 light_mask = 31
@@ -240,7 +274,7 @@ visibility_layer = 31
 position = Vector2(4.999998, -50)
 scale = Vector2(7, 7)
 sprite_frames = SubResource("SpriteFrames_mjgyl")
-animation = &"desplazarseAire"
+animation = &"henki_finish"
 flip_h = true
 
 [node name="punch" type="Area2D" parent="."]
@@ -268,7 +302,7 @@ position = Vector2(-210, -40)
 [node name="ThrowPoint2" type="Node2D" parent="."]
 position = Vector2(-166, -86)
 
-[node name="ThrowPoint3" type="Node2D" parent="."]
+[node name="HenkiSpawnPoint" type="Node2D" parent="."]
 position = Vector2(-2, -341)
 
 [node name="hurtboxIdle" type="Area2D" parent="."]

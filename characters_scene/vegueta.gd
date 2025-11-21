@@ -12,9 +12,15 @@ extends CharacterBody2D
 @export var health: int = 450
 var max_health: int
 
+# --- HENKIDAMA PROPERTIES ---
+@export var henki_dama_scene: PackedScene
+@export var henki_dama_damage: int = 30
+@export var henki_dama_speed: float = 350
+@export var henki_charge_duration: float = 3.0  # Duración de la carga
+
 # --- KNOCKBACK PROPERTIES ---
-@export var knockback_force: float = 80  # Reducido
-@export var knockback_up_force: float = 60  # Reducido
+@export var knockback_force: float = 80
+@export var knockback_up_force: float = 60
 @export var stun_duration: float = 0.3
 @export var knockback_delay: float = 0.1
 
@@ -22,6 +28,7 @@ var max_health: int
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hurtboxIdle: Area2D = $hurtboxIdle
 @onready var hurtboxFlying: Area2D = $hurtboxFlying
+@onready var henki_spawn_point: Node2D = $HenkiSpawnPoint
 
 # --- VARIABLES ---
 var player: CharacterBody2D
@@ -29,15 +36,17 @@ var target_position: Vector2
 var is_stunned: bool = false
 var current_health: int
 var health_bar: ProgressBar = null
-var gravity: float = 0  # SIN GRAVEDAD - Boss aéreo
+var gravity: float = 0
+var current_henki_dama: Node2D = null  # Para guardar referencia a la henkidama
 
 # --- STATE MACHINE ---
-enum State { POSITIONING, ATTACK_PREP, ATTACKING, COOLDOWN, STUNNED }
+enum State { POSITIONING, ATTACK_PREP, HENKI_CHARGE, ATTACKING, COOLDOWN, STUNNED }
 var current_state: State = State.POSITIONING
+var previous_state: State = State.POSITIONING   # <--- AGREGA ESTA
 var state_timer: float = 0.0
 
 # --- SIGNALS ---
-signal boss_defeated
+signal enemy_defeated
 signal health_changed(new_health: int, max_health: int)
 
 func _ready():
@@ -45,16 +54,15 @@ func _ready():
 	current_health = health
 	print("BOSS INICIALIZADO - Posición inicial: ", global_position)
 	
-	# Configurar hurtboxes como el minotauro
+	# Verificar que el nodo de spawn point existe
+	if not henki_spawn_point:
+		print("ERROR: No se encontró el nodo HenkiSpawnPoint")
+		return
+	
 	setup_hurtboxes()
-	
-	# Buscar jugador
 	find_player()
-	
-	# Iniciar en estado de posicionamiento
 	transition_to_state(State.POSITIONING)
 
-# AGREGADO: Función para asignar la barra de vida desde el nivel
 func set_health_bar(bar: ProgressBar):
 	health_bar = bar
 	if health_bar:
@@ -63,14 +71,12 @@ func set_health_bar(bar: ProgressBar):
 		print("Barra de salud del boss asignada correctamente")
 
 func setup_hurtboxes():
-	# Configurar hurtboxes igual que el minotauro
 	hurtboxIdle.add_to_group("hurtbox_enemy")
 	hurtboxIdle.connect("area_entered", Callable(self, "_on_hurtbox_area_entered"))
 	
 	hurtboxFlying.add_to_group("hurtbox_enemy") 
 	hurtboxFlying.connect("area_entered", Callable(self, "_on_hurtbox_area_entered"))
 	
-	# Inicialmente, solo la hurtbox de flying está activa
 	update_hurtboxes()
 
 func update_hurtboxes():
@@ -78,7 +84,7 @@ func update_hurtboxes():
 		State.POSITIONING, State.ATTACKING:
 			hurtboxFlying.monitoring = true
 			hurtboxIdle.monitoring = false
-		State.ATTACK_PREP, State.COOLDOWN, State.STUNNED:
+		State.ATTACK_PREP, State.HENKI_CHARGE, State.COOLDOWN, State.STUNNED:
 			hurtboxFlying.monitoring = false
 			hurtboxIdle.monitoring = true
 
@@ -86,62 +92,61 @@ func _physics_process(delta):
 	if player == null:
 		find_player()
 	
-	# NUNCA aplicar gravedad - es un boss aéreo
 	velocity.y = 0
 	
 	if is_stunned:
-		# Durante el stun, reducir velocidad gradualmente SIN GRAVEDAD
 		velocity = velocity.move_toward(Vector2.ZERO, acceleration * 3)
 		move_and_slide()
 		clamp_to_limits()
-		
-		# Actualizar temporizador del stun
+			
 		state_timer -= delta
 		if state_timer <= 0:
 			is_stunned = false
-			transition_to_state(State.POSITIONING)
+			# --- Volver al estado previo ---
+			transition_to_state(previous_state)
 		return
 	
-	# Actualizar temporizador de estado
 	state_timer -= delta
 	
-	# Ejecutar estado actual
 	match current_state:
 		State.POSITIONING:
 			execute_positioning(delta)
 		State.ATTACK_PREP:
 			execute_attack_prep(delta)
+		State.HENKI_CHARGE:
+			execute_henki_charge(delta)
 		State.ATTACKING:
 			execute_attacking(delta)
 		State.COOLDOWN:
 			execute_cooldown(delta)
 	
-	# Aplicar movimiento
 	move_and_slide()
-	
-	# Asegurar que no salga de los límites
 	clamp_to_limits()
 
 func clamp_to_limits():
-	# Asegurar que la posición esté dentro de los límites definidos
 	var clamped_position = global_position
-	
 	clamped_position.x = clamp(clamped_position.x, x_limits.x, x_limits.y)
 	clamped_position.y = clamp(clamped_position.y, y_limits.x, y_limits.y)
-	
 	global_position = clamped_position
 
 func find_player():
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		player = players[0]
+		print("Jugador encontrado: ", player.global_position)
+	else:
+		print("ERROR: No se encontró jugador")
 
 func transition_to_state(new_state: State):
+	# SOLO limpiar henkidama si estamos en STUNNED o POSITIONING
+	# NO limpiar cuando pasamos a COOLDOWN
+	if (new_state == State.STUNNED or new_state == State.POSITIONING) and current_henki_dama and is_instance_valid(current_henki_dama):
+		print("Limpiando henkidama al cambiar a estado: ", State.keys()[new_state])
+		current_henki_dama.queue_free()
+		current_henki_dama = null
+	
 	current_state = new_state
-	
 	print("CAMBIO DE ESTADO: ", State.keys()[current_state])
-	
-	# Actualizar hurtboxes según el nuevo estado
 	update_hurtboxes()
 	
 	match new_state:
@@ -149,21 +154,25 @@ func transition_to_state(new_state: State):
 			state_timer = 1.5
 			generate_new_position()
 			sprite.play("desplazarseAire")
-		
 		State.ATTACK_PREP:
 			state_timer = 0.8
 			velocity = Vector2.ZERO
 			sprite.play("charge")
 			look_at_player()
-		
+		State.HENKI_CHARGE:
+			state_timer = henki_charge_duration  # 3 segundos de carga
+			velocity = Vector2.ZERO
+			sprite.play("henki_charge")
+			sprite.play("henki_finish")
+			look_at_player()
+			create_henki_dama()  # Crear la pelota inmediatamente
+			print("INICIANDO CARGA DE HENKIDAMA")
 		State.ATTACKING:
 			state_timer = 1.0
 			start_attack()
-		
 		State.COOLDOWN:
-			state_timer = 1.2
+			state_timer = 6.0
 			sprite.play("idle")
-		
 		State.STUNNED:
 			state_timer = stun_duration
 			sprite.play("hurt")
@@ -181,6 +190,21 @@ func execute_positioning(delta):
 func execute_attack_prep(delta):
 	velocity = velocity.move_toward(Vector2.ZERO, acceleration * 2)
 	look_at_player()
+	
+	if state_timer <= 0:
+		transition_to_state(State.HENKI_CHARGE)
+
+func execute_henki_charge(delta):
+	# Durante la carga, el boss se mantiene quieto mirando al jugador
+	velocity = velocity.move_toward(Vector2.ZERO, acceleration * 2)
+	look_at_player()
+	
+	# Mantener el último frame de la animación de carga
+	
+	# Actualizar posición de la henkidama para que siga al boss
+	if current_henki_dama and is_instance_valid(current_henki_dama):
+		current_henki_dama.global_position = henki_spawn_point.global_position
+		print("Henkidama en posición: ", current_henki_dama.global_position)
 	
 	if state_timer <= 0:
 		transition_to_state(State.ATTACKING)
@@ -201,7 +225,6 @@ func execute_cooldown(delta):
 func generate_new_position():
 	var random_x = randf_range(x_limits.x, x_limits.y)
 	var random_y = randf_range(y_limits.x, y_limits.y)
-	
 	target_position = Vector2(random_x, random_y)
 	
 	var margin = 20
@@ -213,36 +236,58 @@ func look_at_player():
 		var player_direction = sign(player.global_position.x - global_position.x)
 		if player_direction != 0:
 			sprite.flip_h = player_direction < 0
+			# Actualizar dirección del punto de spawn de henkidama 
+			henki_spawn_point.position.x = abs(henki_spawn_point.position.x) * player_direction
 
-# --- ATAQUES ---
+func create_henki_dama():
+	print("CREANDO HENKIDAMA DE CARGA")
+	if henki_dama_scene:
+		current_henki_dama = henki_dama_scene.instantiate()
+		get_parent().add_child(current_henki_dama)
+		
+		# Posicionar la henkidama en el punto de spawn
+		current_henki_dama.global_position = henki_spawn_point.global_position
+		print("Henkidama creada en: ", current_henki_dama.global_position)
+		
+		# Configurar la henkidama en modo carga
+		if current_henki_dama.has_method("setup_charge"):
+			current_henki_dama.setup_charge()
+			print("Henkidama configurada en modo carga")
+		else:
+			print("ADVERTENCIA: La henkidama no tiene método setup_charge")
+	else:
+		print("ERROR: No se asignó henki_dama_scene")
+
 func start_attack():
-	print("INICIANDO ATAQUE desde posición: ", global_position)
+	print("LANZANDO HENKIDAMA HACIA EL JUGADOR")
 	look_at_player()
-	sprite.play("attack")
+	sprite.play("henki_finish_frame")
 	
-	var attack_type = randi() % 3
-	match attack_type:
-		0:
-			dash_attack()
-		1:
-			projectile_attack()
-		2:
-			area_attack()
+	# Lanzar la henkidama que estaba cargando DIRECTAMENTE HACIA EL JUGADOR
+	if current_henki_dama and is_instance_valid(current_henki_dama):
+		print("Henkidama encontrada, lanzando...")
+		
+		if current_henki_dama.has_method("launch"):
+			# Calcular dirección DIRECTAMENTE HACIA EL JUGADOR
+			var target_pos = player.global_position if player else Vector2(global_position.x + 100, global_position.y)
+			var direction = (target_pos - current_henki_dama.global_position).normalized()
+			print("Dirección de lanzamiento: ", direction)
+			current_henki_dama.launch(direction, henki_dama_speed, henki_dama_damage)
+		elif current_henki_dama.has_method("setup"):
+			# Método alternativo - dirección hacia el jugador
+			var target_pos = player.global_position if player else Vector2(global_position.x + 100, global_position.y)
+			var direction = (target_pos - current_henki_dama.global_position).normalized()
+			print("Dirección de lanzamiento: ", direction)
+			current_henki_dama.setup(direction, henki_dama_speed, henki_dama_damage)
+		else:
+			print("ERROR: La henkidama no tiene métodos launch ni setup")
+		
+		# NO limpiar la referencia aquí - la henkidama se manejará por sí misma
+		# Solo quitamos la referencia para que no la sigamos actualizando
+		current_henki_dama = null
+	else:
+		print("ERROR: No hay henkidama para lanzar")
 
-func dash_attack():
-	if player:
-		var direction = (player.global_position - global_position).normalized()
-		velocity = direction * flight_speed * 2.5
-
-func projectile_attack():
-	velocity = Vector2.ZERO
-
-func area_attack():
-	velocity = Vector2.ZERO
-
-# ===============================
-# DETECCIÓN DE DAÑO - COMO EL MINOTAURO
-# ===============================
 func _on_hurtbox_area_entered(area: Area2D):
 	if area.is_in_group("hitbox_player"):
 		var jugador = area.get_parent()
@@ -250,35 +295,59 @@ func _on_hurtbox_area_entered(area: Area2D):
 			var damage_received = jugador.get_attack_damage()
 			take_damage(damage_received, jugador.global_position)
 
-# ===============================
-# RECIBIR DAÑO - COMO EL MINOTAURO
-# ===============================
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 	print("BOSS RECIBIÓ DAÑO: ", amount)
-	
 	current_health -= amount
 	current_health = max(current_health, 0)
 	
-	# AGREGADO: Actualizar barra de vida si existe
 	if health_bar:
 		health_bar.value = current_health
-		print("Barra de salud actualizada: ", current_health)
 	
 	emit_signal("health_changed", current_health, max_health)
 	
+	if current_health <= 0:
+		die()
+		return
+
+	# NO interrumpir estos estados (ataques importantes)
+	if current_state in [State.ATTACK_PREP, State.HENKI_CHARGE, State.ATTACKING]:
+		return
+
+	# NO stun por golpes débiles
+	if amount < 15:  # cambia según tu daño
+		return
+
+	# Stun SOLO si golpe fuerte
 	if attacker_position != Vector2.ZERO:
 		apply_knockback(attacker_position)
 	
-	if current_health <= 0:
-		defeat()
-	else:
-		# Cambiar a estado de stun
-		is_stunned = true
-		transition_to_state(State.STUNNED)
+	is_stunned = true
+	transition_to_state(State.STUNNED)
 
-# ===============================
-# KNOCKBACK SUAVE - SIN CAÍDA
-# ===============================
+
+
+func die():
+	print("BOSS DERROTADO - EJECUTANDO die()")
+	hurtboxFlying.monitoring = false
+	hurtboxIdle.monitoring = false
+	
+	# Limpiar henkidama si existe
+	if current_henki_dama and is_instance_valid(current_henki_dama):
+		current_henki_dama.queue_free()
+		current_henki_dama = null
+	
+	if sprite.sprite_frames.has_animation("die"):
+		sprite.play("die")
+	else:
+		sprite.play("hurt")
+	
+	emit_signal("enemy_defeated")
+	set_physics_process(false)
+	
+	await sprite.animation_finished
+	await get_tree().create_timer(0.5).timeout
+	queue_free()
+
 func apply_knockback(attacker_position: Vector2):
 	print("APLICANDO KNOCKBACK SUAVE al boss")
 	
@@ -288,40 +357,6 @@ func apply_knockback(attacker_position: Vector2):
 	await get_tree().create_timer(knockback_delay).timeout
 
 	var knockback_direction = (global_position - attacker_position).normalized()
-	# Knockback mucho más suave y controlado - SIN COMPONENTE VERTICAL FUERTE
 	velocity.x = knockback_direction.x * knockback_force * 0.7
-	velocity.y = -knockback_up_force * 0.1  # Muy poco movimiento vertical
-
+	velocity.y = -knockback_up_force * 0.1
 	move_and_slide()
-
-func defeat():
-	print("BOSS DERROTADO!")
-	sprite.play("defeat")
-	emit_signal("boss_defeated")
-	
-	# Desactivar todas las hurtboxes
-	hurtboxFlying.monitoring = false
-	hurtboxIdle.monitoring = false
-	
-	# Desactivar el movimiento
-	set_physics_process(false)
-	
-	await get_tree().create_timer(2.0).timeout
-	queue_free()
-
-# Funciones para actualizar los límites
-func set_x_limits(new_limits: Vector2):
-	x_limits = new_limits
-	generate_new_position()
-
-func set_y_limits(new_limits: Vector2):
-	y_limits = new_limits
-	generate_new_position()
-
-# --- SEÑALES DE ANIMACIÓN ---
-func _on_animated_sprite_2d_animation_finished():
-	if sprite.animation == "attack":
-		print("ANIMACIÓN DE ATAQUE TERMINADA")
-	elif sprite.animation == "hurt" and current_health > 0:
-		print("ANIMACIÓN DE HURT TERMINADA")
-		# El estado ya debería haber cambiado por el temporizador

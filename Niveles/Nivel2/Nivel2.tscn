@@ -1,6 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://rehdbfdre6de"]
+[gd_scene load_steps=15 format=3 uid="uid://rehdbfdre6de"]
 
 [ext_resource type="Script" uid="uid://dnyhyjp0ve1m0" path="res://script/nivel_1_root.gd" id="1_u4ct0"]
+[ext_resource type="PackedScene" uid="uid://bx2jtk50p3aho" path="res://characters_scene/principal.tscn" id="2_1dab5"]
+[ext_resource type="PackedScene" uid="uid://dqnusqpfsjb36" path="res://characters_scene/mago.tscn" id="3_totk1"]
+[ext_resource type="PackedScene" uid="uid://d7yyuyxq41gp" path="res://characters_scene/HadoukenBottle.tscn" id="4_waeuw"]
 [ext_resource type="Texture2D" uid="uid://dwfqj8hbhlh3t" path="res://backgrounds/bg1.tres" id="5_1dab5"]
 [ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="6_i3vj5"]
 [ext_resource type="AudioStream" uid="uid://ukavqdevinny" path="res://music/tension-orchestral-music-113643.mp3" id="7_43iep"]
@@ -34,6 +37,9 @@ expand_margin_bottom = 10.0
 
 [node name="Node2D_nivel2" type="Node2D"]
 script = ExtResource("1_u4ct0")
+PrincipalScene = ExtResource("2_1dab5")
+RivalScene = ExtResource("3_totk1")
+HadoukenBottleScene = ExtResource("4_waeuw")
 
 [node name="Node2D_mundo" type="Node2D" parent="."]
 
