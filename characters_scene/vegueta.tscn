@@ -1,10 +1,12 @@
-[gd_scene load_steps=36 format=3 uid="uid://cir82fwlqltfy"]
+[gd_scene load_steps=38 format=3 uid="uid://cir82fwlqltfy"]
 
 [ext_resource type="Texture2D" uid="uid://me1gi557ngam" path="res://characters/Char_3.png" id="1_f8agp"]
 [ext_resource type="Script" uid="uid://c0wmax3g1f4rn" path="res://characters_scene/vegueta.gd" id="1_hdj8j"]
 [ext_resource type="PackedScene" uid="uid://cyls1cxofx6rw" path="res://Niveles/Nivel3/henkiDama.tscn" id="2_2yph3"]
 [ext_resource type="PackedScene" uid="uid://csqdl1b5kryu2" path="res://Niveles/Nivel3/beam.tscn" id="3_xgpmt"]
 [ext_resource type="PackedScene" uid="uid://wcmbgj3witm" path="res://Niveles/Nivel3/beamVertical.tscn" id="4_u0mfg"]
+[ext_resource type="AudioStream" uid="uid://bkovny2mpcq6f" path="res://music/loud-thunder-439064.mp3" id="6_l35ax"]
+[ext_resource type="AudioStream" uid="uid://stck80872vv8" path="res://music/11._damage_grunt_male.wav" id="8_pkehf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdj8j"]
 atlas = ExtResource("1_f8agp")
@@ -346,7 +348,15 @@ position = Vector2(-1, -50)
 shape = SubResource("RectangleShape2D_hdj8j")
 
 [node name="LeftBeamSpawn" type="Node2D" parent="."]
-position = Vector2(-253, 426)
+position = Vector2(-377, 454)
 
 [node name="RightBeamSpawn" type="Node2D" parent="."]
-position = Vector2(-259, 304)
+position = Vector2(-389, 277)
+
+[node name="thunderSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_l35ax")
+volume_db = 24.0
+
+[node name="hurt" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_pkehf")
+volume_db = 10.0

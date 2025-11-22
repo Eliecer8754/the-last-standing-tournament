@@ -4,8 +4,11 @@ var direction: Vector2
 var speed: float
 var damage: int
 var is_launched: bool = false
+@onready var voltage: AudioStreamPlayer2D = $voltage
 
 func _ready():
+	voltage.play()
+	
 	# Conectar señales automáticamente
 	connect_signals()
 

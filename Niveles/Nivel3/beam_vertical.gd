@@ -5,7 +5,6 @@ var damage: int = 20
 var active_duration: float = 2.0
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var color_rect: ColorRect = $ColorRect
 
 func _ready() -> void:
 	monitoring = true

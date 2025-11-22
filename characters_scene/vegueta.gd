@@ -12,9 +12,9 @@ extends CharacterBody2D
 @export var health: int = 2000
 var max_health: int
 @export var fixed_beam_positions: Array[Vector2] = [
-	Vector2(338, 198),
-	Vector2(945, 197),  
-	Vector2(1400, 189)
+	Vector2(338, 700),
+	Vector2(945, 700),  
+	Vector2(1400, 700)
 ]
 
 # --- HENKIDAMA PROPERTIES ---
@@ -47,7 +47,8 @@ var max_health: int
 @onready var henki_spawn_point: Node2D = $HenkiSpawnPoint
 @onready var left_beam_spawn: Node2D = $LeftBeamSpawn
 @onready var right_beam_spawn: Node2D = $RightBeamSpawn
-
+@onready var thunderSound: AudioStreamPlayer2D = $thunderSound
+@onready var hurt: AudioStreamPlayer2D = $hurt
 # --- VARIABLES ---
 var player: CharacterBody2D
 var target_position: Vector2
@@ -217,6 +218,7 @@ func transition_to_state(new_state: State):
 			state_timer = 0.7
 			start_attack()
 		State.BEAM_CHARGE:
+			thunderSound.play()
 			state_timer = beam_charge_duration
 			velocity = Vector2.ZERO
 			sprite.play("beam_charge")
@@ -228,6 +230,7 @@ func transition_to_state(new_state: State):
 			create_beams()
 			print("BEAMS ACTIVOS")
 		State.VERTICAL_BEAM_CHARGE:
+			thunderSound.play()
 			state_timer = beam_charge_duration
 			velocity = Vector2.ZERO
 			sprite.play("beam_v")
@@ -479,6 +482,7 @@ func _on_hurtbox_area_entered(area: Area2D):
 			take_damage(damage_received, jugador.global_position)
 
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
+	hurt.play()
 	print("BOSS RECIBIÓ DAÑO: ", amount)
 	current_health -= amount
 	current_health = max(current_health, 0)
