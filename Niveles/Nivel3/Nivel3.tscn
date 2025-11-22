@@ -98,9 +98,9 @@ anchor_bottom = 0.125
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_hpk0g")
-max_value = 450.0
+max_value = 2000.0
 step = 1.0
-value = 450.0
+value = 2000.0
 metadata/_edit_use_anchors_ = true
 
 [node name="WinnerPanel" type="Panel" parent="CanvasLayer"]

@@ -1,12 +1,22 @@
-[gd_scene load_steps=32 format=3 uid="uid://cir82fwlqltfy"]
+[gd_scene load_steps=36 format=3 uid="uid://cir82fwlqltfy"]
 
 [ext_resource type="Texture2D" uid="uid://me1gi557ngam" path="res://characters/Char_3.png" id="1_f8agp"]
 [ext_resource type="Script" uid="uid://c0wmax3g1f4rn" path="res://characters_scene/vegueta.gd" id="1_hdj8j"]
 [ext_resource type="PackedScene" uid="uid://cyls1cxofx6rw" path="res://Niveles/Nivel3/henkiDama.tscn" id="2_2yph3"]
+[ext_resource type="PackedScene" uid="uid://csqdl1b5kryu2" path="res://Niveles/Nivel3/beam.tscn" id="3_xgpmt"]
+[ext_resource type="PackedScene" uid="uid://wcmbgj3witm" path="res://Niveles/Nivel3/beamVertical.tscn" id="4_u0mfg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdj8j"]
 atlas = ExtResource("1_f8agp")
 region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uqggn"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(896, 256, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf5en"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(704, 256, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2yph3"]
 atlas = ExtResource("1_f8agp")
@@ -112,6 +122,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_uqggn")
+}],
+"loop": true,
+"name": &"beam_charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hf5en")
+}],
+"loop": true,
+"name": &"beam_v",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_2yph3")
 }],
 "loop": true,
@@ -194,11 +220,6 @@ animations = [{
 "name": &"jump",
 "speed": 5.0
 }, {
-"frames": [],
-"loop": true,
-"name": &"new_animation",
-"speed": 5.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4ao1n")
@@ -265,8 +286,14 @@ collision_mask = 15
 platform_floor_layers = 4294901762
 platform_wall_layers = 2
 script = ExtResource("1_hdj8j")
+flight_speed = 500.0
 henki_dama_scene = ExtResource("2_2yph3")
-henki_dama_damage = 15
+henki_dama_speed = 800.0
+henki_charge_duration = 0.5
+beam_scene = ExtResource("3_xgpmt")
+beam_damage = 10
+vertical_beam_scene = ExtResource("4_u0mfg")
+vertical_beam_damage = 10
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 light_mask = 31
@@ -274,7 +301,7 @@ visibility_layer = 31
 position = Vector2(4.999998, -50)
 scale = Vector2(7, 7)
 sprite_frames = SubResource("SpriteFrames_mjgyl")
-animation = &"henki_finish"
+animation = &"beam_v"
 flip_h = true
 
 [node name="punch" type="Area2D" parent="."]
@@ -317,3 +344,9 @@ visible = false
 [node name="CollisionPolygon2D" type="CollisionShape2D" parent="hurtboxFlying"]
 position = Vector2(-1, -50)
 shape = SubResource("RectangleShape2D_hdj8j")
+
+[node name="LeftBeamSpawn" type="Node2D" parent="."]
+position = Vector2(-253, 426)
+
+[node name="RightBeamSpawn" type="Node2D" parent="."]
+position = Vector2(-259, 304)

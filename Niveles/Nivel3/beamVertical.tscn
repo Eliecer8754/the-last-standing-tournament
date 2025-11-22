@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://wcmbgj3witm"]
+
+[ext_resource type="Script" uid="uid://d2fxa0glf4wtm" path="res://Niveles/Nivel3/beam_vertical.gd" id="1_s8ayb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p8n0u"]
+size = Vector2(69, 4876)
+
+[node name="Beam" type="Area2D"]
+script = ExtResource("1_s8ayb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(29.5, -638)
+shape = SubResource("RectangleShape2D_p8n0u")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -4.0
+offset_top = -3048.0
+offset_right = 65.0
+offset_bottom = 1821.0
+size_flags_horizontal = 4
+color = Color(0.19215687, 1, 1, 1)

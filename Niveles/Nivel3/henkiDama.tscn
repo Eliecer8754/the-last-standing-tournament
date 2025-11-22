@@ -7,6 +7,7 @@
 radius = 116.03879
 
 [node name="HenkiDama" type="Area2D"]
+scale = Vector2(1.2, 1.2)
 script = ExtResource("1_cnc70")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
