@@ -4,7 +4,7 @@ extends CharacterBody2D
 @export var speed: float = 180
 @export var attack_range: float = 250
 @export var min_distance: float = 60
-
+@onready var thunderSound: AudioStreamPlayer2D = $thunderSound
 # --- COMBAT PROPERTIES ---
 @export var attack_duration: float = 1
 @export var damage: int = 8
@@ -30,7 +30,7 @@ extends CharacterBody2D
 @export var MisilAereoScene: PackedScene
 @export var landing_cooldown: float = 2.0  # Tiempo de espera después de aterrizar
 @export var post_missile_delay: float = 3.0  # Tiempo extra después del último misil antes de aterrizar
-
+@onready var hurt: AudioStreamPlayer2D = $hurt
 # --- HEALTH PROPERTIES ---
 @export var health: int = 450
 var max_health: int
@@ -476,6 +476,7 @@ func start_landing_cooldown():
 @export var manual_camera_width: float = 2000.0
 
 func launch_aerial_missile():
+	thunderSound.play()
 	if not MisilAereoScene:
 		return
 
@@ -635,6 +636,7 @@ func _on_area_dano_entered(area: Area2D):
 # RECIBIR DAÑO - CORREGIDO PARA APLICAR KNOCKBACK CONSISTENTE
 # ===============================
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
+	hurt.play()
 	if is_flying or is_landing or waiting_for_missiles:
 		print("MAGO: Invulnerable durante ataque volador o aterrizaje")
 		return

@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://dqnusqpfsjb36"]
+[gd_scene load_steps=47 format=3 uid="uid://dqnusqpfsjb36"]
 
 [ext_resource type="Texture2D" uid="uid://d1boo4gv1m26c" path="res://characters/Wanderer Magican/Idle.png" id="1_0bxaq"]
 [ext_resource type="Script" uid="uid://mjfwvy5ji3al" path="res://characters_scene/characterBody2D_mago.gd" id="1_mtb12"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://b6i00birttp3n" path="res://characters_scene/bolita.tscn" id="2_nsdbf"]
 [ext_resource type="Texture2D" uid="uid://d1vwargbmyjcc" path="res://characters/Wanderer Magican/Walk.png" id="3_hsfud"]
 [ext_resource type="Texture2D" uid="uid://2c7275y3khq0" path="res://characters/Wanderer Magican/Jump.png" id="4_mtb12"]
+[ext_resource type="AudioStream" uid="uid://stck80872vv8" path="res://music/11._damage_grunt_male.wav" id="8_vas7e"]
+[ext_resource type="AudioStream" uid="uid://bkovny2mpcq6f" path="res://music/loud-thunder-439064.mp3" id="9_augdr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2t1k7"]
 atlas = ExtResource("2_mtb12")
@@ -328,3 +330,11 @@ shape = SubResource("RectangleShape2D_3ta5e")
 
 [node name="ThrowPoint" type="Node2D" parent="."]
 position = Vector2(-135, 54)
+
+[node name="hurt" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_vas7e")
+volume_db = 10.0
+
+[node name="thunderSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_augdr")
+volume_db = 10.918
