@@ -4,9 +4,9 @@
 [ext_resource type="PackedScene" uid="uid://bx2jtk50p3aho" path="res://characters_scene/principal.tscn" id="2_q1gpb"]
 [ext_resource type="PackedScene" uid="uid://cir82fwlqltfy" path="res://characters_scene/vegueta.tscn" id="3_alitk"]
 [ext_resource type="PackedScene" uid="uid://d7yyuyxq41gp" path="res://characters_scene/HadoukenBottle.tscn" id="4_myuj2"]
-[ext_resource type="Texture2D" uid="uid://bu36pmuyurf85" path="res://backgrounds/bg2.tres" id="5_55sim"]
+[ext_resource type="Texture2D" uid="uid://ohshebtri6s2" path="res://backgrounds/bg3/f1.png" id="5_alitk"]
 [ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="6_eso45"]
-[ext_resource type="AudioStream" uid="uid://ukavqdevinny" path="res://music/tension-orchestral-music-113643.mp3" id="7_6rh1y"]
+[ext_resource type="AudioStream" uid="uid://2o3eebep5kfs" path="res://music/rammstein-style-metal-10726.mp3" id="7_alitk"]
 [ext_resource type="AudioStream" uid="uid://b8qn1vwk66ega" path="res://music/three-two-one-fight-deep-voice-38382.mp3" id="8_c0bbh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pcbvp"]
@@ -44,9 +44,9 @@ HadoukenBottleScene = ExtResource("4_myuj2")
 [node name="Node2D_mundo" type="Node2D" parent="."]
 
 [node name="Sprite2D_fondo" type="Sprite2D" parent="Node2D_mundo"]
-position = Vector2(747.5, 226)
-scale = Vector2(2.8426967, 4.714286)
-texture = ExtResource("5_55sim")
+position = Vector2(723, 228)
+scale = Vector2(1.7104299, 1.0130442)
+texture = ExtResource("5_alitk")
 
 [node name="StaticBody2D_piso" type="StaticBody2D" parent="Node2D_mundo"]
 position = Vector2(-59, -252)
@@ -180,7 +180,7 @@ theme_override_fonts/font = ExtResource("6_eso45")
 theme_override_font_sizes/font_size = 100
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("7_6rh1y")
+stream = ExtResource("7_alitk")
 volume_db = 20.0
 autoplay = true
 
