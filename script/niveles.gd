@@ -182,6 +182,15 @@ func _on_BotonNivel2_pressed():
 func _on_BotonNivel3_pressed():
 	nivel_seleccionado = 3
 	seleccionar_rival(vegueta, "vegueta", Vector2(560, 400), "nivel3Vegueta/AnimatedSprite2D")
+	
+	# Desactivar la física del jefe nivel 3 en el menú
+	if rival and rival.has_method("set_physics_process"):
+		rival.set_physics_process(false)
+	
+	# Forzar animación idle
+	var anim_sprite = rival.get_node_or_null("nivel3Vegueta/AnimatedSprite2D")
+	if anim_sprite:
+		anim_sprite.play("idle")
 
 func _on_back_pressed():
 	get_tree().change_scene_to_file("res://scenes/menu_de_juego.tscn")

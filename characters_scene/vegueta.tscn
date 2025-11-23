@@ -303,7 +303,7 @@ visibility_layer = 31
 position = Vector2(4.999998, -50)
 scale = Vector2(7, 7)
 sprite_frames = SubResource("SpriteFrames_mjgyl")
-animation = &"beam_v"
+animation = &"idle"
 flip_h = true
 
 [node name="punch" type="Area2D" parent="."]
