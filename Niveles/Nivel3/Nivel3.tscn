@@ -1,13 +1,14 @@
-[gd_scene load_steps=15 format=3 uid="uid://bq6k3nvdp2yod"]
+[gd_scene load_steps=16 format=3 uid="uid://bq6k3nvdp2yod"]
 
 [ext_resource type="Script" uid="uid://dnyhyjp0ve1m0" path="res://script/nivel_1_root.gd" id="1_yodhl"]
 [ext_resource type="PackedScene" uid="uid://bx2jtk50p3aho" path="res://characters_scene/principal.tscn" id="2_q1gpb"]
 [ext_resource type="PackedScene" uid="uid://cir82fwlqltfy" path="res://characters_scene/vegueta.tscn" id="3_alitk"]
 [ext_resource type="PackedScene" uid="uid://d7yyuyxq41gp" path="res://characters_scene/HadoukenBottle.tscn" id="4_myuj2"]
-[ext_resource type="Texture2D" uid="uid://ohshebtri6s2" path="res://backgrounds/bg3/f1.png" id="5_alitk"]
+[ext_resource type="Texture2D" uid="uid://bslsvelo6553k" path="res://backgrounds/bg3.tres" id="5_alitk"]
 [ext_resource type="FontFile" uid="uid://bpq8k3mg0yvnx" path="res://fuente/Daydream DEMO.otf" id="6_eso45"]
 [ext_resource type="AudioStream" uid="uid://2o3eebep5kfs" path="res://music/rammstein-style-metal-10726.mp3" id="7_alitk"]
 [ext_resource type="AudioStream" uid="uid://b8qn1vwk66ega" path="res://music/three-two-one-fight-deep-voice-38382.mp3" id="8_c0bbh"]
+[ext_resource type="Script" uid="uid://ds4xefet3gwfj" path="res://Niveles/Nivel3/audio_stream_player_2d.gd" id="8_nchp6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pcbvp"]
 size = Vector2(1684, 145)
@@ -44,8 +45,8 @@ HadoukenBottleScene = ExtResource("4_myuj2")
 [node name="Node2D_mundo" type="Node2D" parent="."]
 
 [node name="Sprite2D_fondo" type="Sprite2D" parent="Node2D_mundo"]
-position = Vector2(723, 228)
-scale = Vector2(1.7104299, 1.0130442)
+position = Vector2(765.99994, 237)
+scale = Vector2(1.7715118, 1.0788083)
 texture = ExtResource("5_alitk")
 
 [node name="StaticBody2D_piso" type="StaticBody2D" parent="Node2D_mundo"]
@@ -183,6 +184,7 @@ theme_override_font_sizes/font_size = 100
 stream = ExtResource("7_alitk")
 volume_db = 20.0
 autoplay = true
+script = ExtResource("8_nchp6")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(766, 208)

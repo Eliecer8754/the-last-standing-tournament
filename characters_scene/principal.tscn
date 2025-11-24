@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://bx2jtk50p3aho"]
+[gd_scene load_steps=47 format=3 uid="uid://bx2jtk50p3aho"]
 
 [ext_resource type="Script" uid="uid://brpf4xa72l7g5" path="res://script/CharacterBody2D_JugadorBody.gd" id="1_8ifni"]
 [ext_resource type="Texture2D" uid="uid://dgua5mskwh00d" path="res://characters/principal/idle.png" id="1_cd866"]
@@ -258,9 +258,6 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ewdpl"]
 size = Vector2(139, 329)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_td8pc"]
-size = Vector2(167, 232)
-
 [node name="CharacterBody2D_JugadorBody" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_8ifni")
 HadoukenScene = ExtResource("2_ewdpl")
@@ -269,7 +266,7 @@ HadoukenScene = ExtResource("2_ewdpl")
 position = Vector2(-15.499992, -29.534494)
 scale = Vector2(4.2888875, 4.1843333)
 sprite_frames = SubResource("SpriteFrames_7fv0o")
-animation = &"idle"
+animation = &"crouch"
 
 [node name="Area2D_ataque" type="Area2D" parent="."]
 visible = false
@@ -317,9 +314,9 @@ position = Vector2(189, 104)
 collision_layer = 65535
 collision_mask = 255
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxCrouching"]
-position = Vector2(-216.5, -75)
-shape = SubResource("RectangleShape2D_td8pc")
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="HurtboxCrouching"]
+position = Vector2(-189.5, -71.5)
+polygon = PackedVector2Array(-62.5, 95.5, -76.5, 53.5, -59.5, 42.5, -54.5, 7.5, -51.5, -34.5, -47.5, -79.5, -27.5, -90.5, -15.5, -97.5, 4.5, -113.5, 21.5, -120.5, 37.5, -117.5, 48.5, -109.5, 55.5, -95.5, 45.5, -79.5, 68.5, -75.5, 68.5, -58.5, 66.5, -34.5, 59.5, -20.5, 60.5, -2.5, 66.5, -12.5, 72.5, -6.5, 78.5, 15.5, 73.5, 30.5, 68.5, 37.5, 60.5, 51.5, 48.5, 62.5, 44.5, 68.5, 45.5, 76.5, 60.5, 86.5, 64.5, 95.5, 64.5, 95.5)
 
 [node name="blockSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("15_26dil")

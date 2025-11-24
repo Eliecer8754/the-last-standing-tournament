@@ -1,16 +1,10 @@
-[gd_resource type="AnimatedTexture" load_steps=5 format=3 uid="uid://bslsvelo6553k"]
+[gd_resource type="AnimatedTexture" load_steps=3 format=3 uid="uid://bslsvelo6553k"]
 
 [ext_resource type="Texture2D" uid="uid://ohshebtri6s2" path="res://backgrounds/bg3/f1.png" id="1_1gww7"]
-[ext_resource type="Texture2D" uid="uid://hvokrepbifx6" path="res://backgrounds/bg3/f2.png" id="2_j4yjy"]
-[ext_resource type="Texture2D" uid="uid://cqmvp26gdt7bp" path="res://backgrounds/bg3/f3.png" id="3_jcinp"]
-[ext_resource type="Texture2D" uid="uid://d0bfoawgxrb2n" path="res://backgrounds/bg3/f4.png" id="4_b6ukg"]
+[ext_resource type="Texture2D" uid="uid://ifrbuu3kpumt" path="res://backgrounds/bg3/f1.1.png" id="2_8mwrw"]
 
 [resource]
-frames = 4
+frames = 2
 frame_0/texture = ExtResource("1_1gww7")
-frame_1/texture = ExtResource("2_j4yjy")
+frame_1/texture = ExtResource("2_8mwrw")
 frame_1/duration = 1.0
-frame_2/texture = ExtResource("3_jcinp")
-frame_2/duration = 1.0
-frame_3/texture = ExtResource("4_b6ukg")
-frame_3/duration = 1.0

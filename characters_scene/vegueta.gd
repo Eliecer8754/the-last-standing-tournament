@@ -1,21 +1,20 @@
 extends CharacterBody2D
 
+@onready var energy_audio: AudioStreamPlayer2D = $SuperSayayin
+
 # --- MOVEMENT PROPERTIES ---
 @export var flight_speed: float = 300
 @export var acceleration: float = 25
 @export var x_limits: Vector2 = Vector2(150, 1200)
 @export var y_limits: Vector2 = Vector2(-50, 200)
 
+@onready var energy_effect: AnimatedSprite2D = $EnergyEffect
+@export var energy_effect_textures: Array[Texture2D] = []
 # --- COMBAT PROPERTIES ---
 @export var attack_duration: float = 0.3
 @export var damage: int = 10
 @export var health: int = 2000
 var max_health: int
-@export var fixed_beam_positions: Array[Vector2] = [
-	Vector2(338, 700),
-	Vector2(945, 700),  
-	Vector2(1400, 700)
-]
 
 # --- HENKIDAMA PROPERTIES ---
 @export var henki_dama_scene: PackedScene
@@ -33,6 +32,14 @@ var max_health: int
 @export var vertical_beam_scene: PackedScene
 @export var vertical_beam_damage: int = 20
 @export var vertical_beam_active_duration: float = 1.5
+@export var vertical_beam_y_offset: float = 620
+
+# Posiciones fijas para el ataque de 3 beams
+@export var fixed_beam_positions: Array[Vector2] = [
+	Vector2(338, 700),
+	Vector2(945, 700),  
+	Vector2(1400, 700)
+]
 
 # --- KNOCKBACK PROPERTIES ---
 @export var knockback_force: float = 80
@@ -49,6 +56,7 @@ var max_health: int
 @onready var right_beam_spawn: Node2D = $RightBeamSpawn
 @onready var thunderSound: AudioStreamPlayer2D = $thunderSound
 @onready var hurt: AudioStreamPlayer2D = $hurt
+
 # --- VARIABLES ---
 var player: CharacterBody2D
 var target_position: Vector2
@@ -59,7 +67,17 @@ var gravity: float = 0
 var current_henki_dama: Node2D = null
 var left_beam: Node2D = null
 var right_beam: Node2D = null
+
+# Variables para los beams verticales
+var vertical_beam_target: Vector2 = Vector2.ZERO
+var current_vertical_beam: Node2D = null
 var vertical_beams: Array = []
+var use_single_vertical_beam: bool = true  # Alternar entre único y triple
+
+# Variables para el modo enraged (30% de vida)
+var is_enraged: bool = false
+var enraged_speed_multiplier: float = 1.4
+var enraged_attack_multiplier: float = 0.8
 
 # --- STATE MACHINE ---
 enum State { 
@@ -88,11 +106,36 @@ func _ready():
 	max_health = health
 	current_health = health
 	print("BOSS INICIALIZADO - Posición inicial: ", global_position)
-	
+	setup_energy_effect()
 	setup_hurtboxes()
 	find_player()
 	transition_to_state(State.POSITIONING)
+	
+func setup_energy_effect():
+	if energy_effect:
+		energy_effect.visible = false
+		energy_effect.modulate = Color(1, 1, 1, 0.7)
 
+func check_enraged_mode():
+	if not is_enraged and current_health <= max_health * 0.3:
+		is_enraged = true
+		print("¡BOSS ENRAGED! - Modo 1.5x más rápido activado")
+		sprite.modulate = Color(1.5, 0.7, 0.7)
+		activate_energy_effect()
+		if energy_audio and energy_audio.has_method("start_music"):
+			energy_audio.start_music()
+
+func activate_energy_effect():
+	if energy_effect:
+		energy_effect.visible = true
+		energy_effect.play("default")
+		print("Efecto de energía activado")
+
+func deactivate_energy_effect():
+	if energy_effect:
+		energy_effect.visible = false
+		energy_effect.stop()
+		
 func set_health_bar(bar: ProgressBar):
 	health_bar = bar
 	if health_bar:
@@ -175,19 +218,24 @@ func find_player():
 	else:
 		print("ERROR: No se encontró jugador")
 
+func get_speed_multiplier() -> float:
+	return enraged_speed_multiplier if is_enraged else 1.0
+
+func get_attack_multiplier() -> float:
+	return enraged_attack_multiplier if is_enraged else 1.0
+
 func transition_to_state(new_state: State):
-	# Si estamos saliendo de STUNNED, asegurarnos de limpiar el flag
+	check_enraged_mode()
+	
 	if current_state == State.STUNNED and new_state != State.STUNNED:
 		is_stunned = false
 		print("Saliendo del estado STUNNED")
 	
-	# Limpiar henkidama si estamos en STUNNED o POSITIONING
 	if (new_state == State.STUNNED or new_state == State.POSITIONING) and current_henki_dama and is_instance_valid(current_henki_dama):
 		print("Limpiando henkidama al cambiar a estado: ", State.keys()[new_state])
 		current_henki_dama.queue_free()
 		current_henki_dama = null
 	
-	# Limpiar beams si estamos en STUNNED o POSITIONING
 	if (new_state == State.STUNNED or new_state == State.POSITIONING):
 		cleanup_all_attacks()
 	
@@ -195,53 +243,69 @@ func transition_to_state(new_state: State):
 	print("CAMBIO DE ESTADO: ", State.keys()[current_state])
 	update_hurtboxes()
 	
+	var speed_multiplier = get_speed_multiplier()
+	var attack_multiplier = get_attack_multiplier()
+	
 	match new_state:
 		State.POSITIONING:
-			state_timer = 1.0
+			state_timer = 1.0 * attack_multiplier
 			generate_new_position()
 			sprite.play("desplazarseAire")
 		State.ATTACK_PREP:
-			state_timer = 0.5
+			state_timer = 0.5 * attack_multiplier
 			velocity = Vector2.ZERO
 			look_at_player()
-			# Elegir aleatoriamente entre los tres tipos de ataque
 			attack_choice = randi() % 3
 			print("Elegido ataque: ", ["HENKI_DAMA", "BEAM_HORIZONTAL", "BEAM_VERTICAL"][attack_choice])
 		State.HENKI_CHARGE:
-			state_timer = henki_charge_duration
+			state_timer = henki_charge_duration * attack_multiplier
 			velocity = Vector2.ZERO
 			sprite.play("henki_charge")
 			look_at_player()
 			create_henki_dama()
 			print("INICIANDO CARGA DE HENKIDAMA")
 		State.ATTACKING:
-			state_timer = 0.7
+			state_timer = 0.7 * attack_multiplier
 			start_attack()
 		State.BEAM_CHARGE:
 			thunderSound.play()
-			state_timer = beam_charge_duration
+			state_timer = beam_charge_duration * attack_multiplier
 			velocity = Vector2.ZERO
 			sprite.play("beam_charge")
 			look_at_player()
 			print("INICIANDO CARGA DE BEAM")
 		State.BEAM_ACTIVE:
-			state_timer = beam_active_duration
+			state_timer = beam_active_duration * attack_multiplier
 			velocity = Vector2.ZERO
 			create_beams()
 			print("BEAMS ACTIVOS")
 		State.VERTICAL_BEAM_CHARGE:
 			thunderSound.play()
-			state_timer = beam_charge_duration
+			state_timer = beam_charge_duration * attack_multiplier * 0.7
 			velocity = Vector2.ZERO
-			sprite.play("beam_v")
-			print("INICIANDO CARGA DE BEAM VERTICAL")
+			# Alternar entre beam único y triple
+			use_single_vertical_beam = randf() > 0.5
+			if use_single_vertical_beam:
+				sprite.play("single")
+				if player and is_instance_valid(player):
+					vertical_beam_target = Vector2(player.global_position.x, vertical_beam_y_offset)
+				else:
+					vertical_beam_target = Vector2(945, vertical_beam_y_offset)
+				print("INICIANDO CARGA DE BEAM VERTICAL ÚNICO - Objetivo: ", vertical_beam_target)
+			else:
+				sprite.play("beam_v")
+				print("INICIANDO CARGA DE BEAMS VERTICALES TRIPLES")
 		State.VERTICAL_BEAM_ACTIVE:
-			state_timer = vertical_beam_active_duration
+			state_timer = vertical_beam_active_duration * attack_multiplier * 0.7
 			velocity = Vector2.ZERO
-			create_vertical_beams()
-			print("BEAMS VERTICALES ACTIVOS EN 3 PUNTOS")
+			if use_single_vertical_beam:
+				create_single_vertical_beam()
+				print("BEAM VERTICAL ÚNICO ACTIVO EN POSICIÓN: ", vertical_beam_target)
+			else:
+				create_triple_vertical_beams()
+				print("BEAMS VERTICALES TRIPLES ACTIVOS")
 		State.COOLDOWN:
-			state_timer = 2.5
+			state_timer = 2.5 * attack_multiplier
 			sprite.play("idle")
 			cleanup_all_attacks()
 		State.STUNNED:
@@ -251,13 +315,13 @@ func transition_to_state(new_state: State):
 			print("INICIANDO STUN - Duración: ", stun_duration)
 
 func execute_positioning(delta):
+	var speed_multiplier = get_speed_multiplier()
 	var direction = (target_position - global_position).normalized()
-	velocity = velocity.move_toward(direction * flight_speed, acceleration)
+	velocity = velocity.move_toward(direction * flight_speed * speed_multiplier, acceleration * speed_multiplier)
 	
 	if direction.x != 0:
 		sprite.flip_h = direction.x < 0
 	
-	# Transición más rápida si está cerca del objetivo o se acaba el tiempo
 	if global_position.distance_to(target_position) < 30 or state_timer <= 0:
 		transition_to_state(State.ATTACK_PREP)
 
@@ -301,7 +365,6 @@ func execute_beam_active(delta):
 	velocity = velocity.move_toward(Vector2.ZERO, acceleration * 2)
 	look_at_player()
 	
-	# Actualizar posición de los beams si existen
 	if left_beam and is_instance_valid(left_beam):
 		left_beam.global_position = left_beam_spawn.global_position
 	if right_beam and is_instance_valid(right_beam):
@@ -319,9 +382,6 @@ func execute_vertical_beam_charge(delta):
 func execute_vertical_beam_active(delta):
 	velocity = velocity.move_toward(Vector2.ZERO, acceleration * 2)
 	
-	# LOS BEAMS VERTICALES YA NO SE MUEVEN - SON ESTÁTICOS
-	# No actualizamos su posición
-	
 	if state_timer <= 0:
 		transition_to_state(State.COOLDOWN)
 
@@ -333,20 +393,16 @@ func execute_cooldown(delta):
 		transition_to_state(State.POSITIONING)
 
 func generate_new_position():
-	# Si el jugador existe, generar posición cerca del jugador para más interacción
 	if player:
 		var player_pos = player.global_position
-		# Generar posición en un radio alrededor del jugador
 		var angle = randf() * 2 * PI
-		var distance = randf_range(150, 300)  # Distancia media del jugador
+		var distance = randf_range(150, 300)
 		target_position = player_pos + Vector2(cos(angle), sin(angle)) * distance
 	else:
-		# Fallback a posición aleatoria si no hay jugador
 		var random_x = randf_range(x_limits.x, x_limits.y)
 		var random_y = randf_range(y_limits.x, y_limits.y)
 		target_position = Vector2(random_x, random_y)
 	
-	# Asegurar que esté dentro de los límites
 	var margin = 20
 	target_position.x = clamp(target_position.x, x_limits.x + margin, x_limits.y - margin)
 	target_position.y = clamp(target_position.y, y_limits.x + margin, y_limits.y - margin)
@@ -356,7 +412,6 @@ func look_at_player():
 		var player_direction = sign(player.global_position.x - global_position.x)
 		if player_direction != 0:
 			sprite.flip_h = player_direction < 0
-			# Actualizar dirección del punto de spawn de henkidama 
 			henki_spawn_point.position.x = abs(henki_spawn_point.position.x) * player_direction
 
 func create_henki_dama():
@@ -379,17 +434,14 @@ func create_henki_dama():
 func create_beams():
 	print("CREANDO BEAMS")
 	if beam_scene:
-		# Crear beam izquierdo
 		left_beam = beam_scene.instantiate()
 		get_parent().add_child(left_beam)
 		left_beam.global_position = left_beam_spawn.global_position
 		
-		# Crear beam derecho  
 		right_beam = beam_scene.instantiate()
 		get_parent().add_child(right_beam)
 		right_beam.global_position = right_beam_spawn.global_position
 		
-		# Configurar los beams
 		if left_beam.has_method("setup"):
 			left_beam.setup(-1, beam_damage)
 		if right_beam.has_method("setup"):
@@ -399,23 +451,39 @@ func create_beams():
 	else:
 		print("ERROR: No se asignó beam_scene")
 
-func create_vertical_beams():
-	print("CREANDO BEAMS VERTICALES EN POSICIONES FIJAS")
+func create_single_vertical_beam():
+	print("CREANDO BEAM VERTICAL ÚNICO EN POSICIÓN DEL JUGADOR")
 	if vertical_beam_scene:
-		# Limpiar beams anteriores
+		if current_vertical_beam and is_instance_valid(current_vertical_beam):
+			current_vertical_beam.queue_free()
+			current_vertical_beam = null
+		
+		var adjusted_position = Vector2(vertical_beam_target.x, vertical_beam_y_offset)
+		
+		current_vertical_beam = vertical_beam_scene.instantiate()
+		get_parent().add_child(current_vertical_beam)
+		current_vertical_beam.global_position = adjusted_position
+		
+		if current_vertical_beam.has_method("setup"):
+			current_vertical_beam.setup(vertical_beam_damage)
+		
+		print("Beam vertical único creado en: ", adjusted_position)
+	else:
+		print("ERROR: No se asignó vertical_beam_scene")
+
+func create_triple_vertical_beams():
+	print("CREANDO BEAMS VERTICALES TRIPLES EN POSICIONES FIJAS")
+	if vertical_beam_scene:
 		cleanup_vertical_beams()
 		
-		# Crear beams en las posiciones fijas
 		for position in fixed_beam_positions:
 			var vertical_beam = vertical_beam_scene.instantiate()
 			get_parent().add_child(vertical_beam)
 			vertical_beam.global_position = position
 			
-			# Configurar el beam
 			if vertical_beam.has_method("setup"):
 				vertical_beam.setup(vertical_beam_damage)
 			
-			# Añadir al array de control
 			vertical_beams.append(vertical_beam)
 			
 			print("Beam vertical estático creado en posición fija: ", position)
@@ -433,12 +501,13 @@ func cleanup_beams():
 		right_beam = null
 
 func cleanup_vertical_beams():
-	# Limpiar todos los beams del array
+	if current_vertical_beam and is_instance_valid(current_vertical_beam):
+		current_vertical_beam.queue_free()
+		current_vertical_beam = null
+	
 	for beam in vertical_beams:
 		if beam and is_instance_valid(beam):
 			beam.queue_free()
-	
-	# Limpiar el array
 	vertical_beams.clear()
 
 func cleanup_all_attacks():
@@ -487,6 +556,8 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 	current_health -= amount
 	current_health = max(current_health, 0)
 	
+	check_enraged_mode()
+	
 	if health_bar:
 		health_bar.value = current_health
 	
@@ -496,22 +567,18 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 		die()
 		return
 
-	# NO interrumpir estos estados (ataques importantes)
 	if current_state in [State.ATTACK_PREP, State.HENKI_CHARGE, State.ATTACKING, State.BEAM_CHARGE, State.BEAM_ACTIVE, State.VERTICAL_BEAM_CHARGE, State.VERTICAL_BEAM_ACTIVE]:
 		print("Ataque en progreso - ignorando stun")
 		return
 
-	# Si ya está stuneado, no aplicar otro stun
 	if current_state == State.STUNNED:
 		print("Ya está stuneado - ignorando stun adicional")
 		return
 
-	# NO stun por golpes débiles
 	if amount < 15:
 		print("Daño muy bajo - ignorando stun")
 		return
 
-	# Stun SOLO si golpe fuerte
 	if attacker_position != Vector2.ZERO:
 		apply_knockback(attacker_position)
 	
@@ -525,6 +592,7 @@ func die():
 	hurtboxIdle.monitoring = false
 	
 	cleanup_all_attacks()
+	deactivate_energy_effect()
 	
 	if sprite.sprite_frames.has_animation("die"):
 		sprite.play("die")

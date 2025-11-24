@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://cir82fwlqltfy"]
+[gd_scene load_steps=46 format=3 uid="uid://cir82fwlqltfy"]
 
 [ext_resource type="Texture2D" uid="uid://me1gi557ngam" path="res://characters/Char_3.png" id="1_f8agp"]
 [ext_resource type="Script" uid="uid://c0wmax3g1f4rn" path="res://characters_scene/vegueta.gd" id="1_hdj8j"]
@@ -6,7 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://csqdl1b5kryu2" path="res://Niveles/Nivel3/beam.tscn" id="3_xgpmt"]
 [ext_resource type="PackedScene" uid="uid://wcmbgj3witm" path="res://Niveles/Nivel3/beamVertical.tscn" id="4_u0mfg"]
 [ext_resource type="AudioStream" uid="uid://bkovny2mpcq6f" path="res://music/loud-thunder-439064.mp3" id="6_l35ax"]
+[ext_resource type="AudioStream" uid="uid://bi8mtpwqs78wr" path="res://music/Sonido Super Sayayin [1_k6o9UUQ4k].mp3" id="8_a1r6l"]
 [ext_resource type="AudioStream" uid="uid://stck80872vv8" path="res://music/11._damage_grunt_male.wav" id="8_pkehf"]
+[ext_resource type="Script" uid="uid://depppetkuns0b" path="res://characters_scene/super_sayayin.gd" id="9_pkehf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdj8j"]
 atlas = ExtResource("1_f8agp")
@@ -79,6 +81,10 @@ region = Rect2(832, 192, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_0kqkc"]
 atlas = ExtResource("1_f8agp")
 region = Rect2(768, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5tqig"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(1024, 128, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_knk1a"]
 atlas = ExtResource("1_f8agp")
@@ -235,6 +241,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_5tqig")
+}],
+"loop": true,
+"name": &"single",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_knk1a")
 }, {
 "duration": 1.0,
@@ -281,6 +295,42 @@ size = Vector2(167, 321.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hdj8j"]
 size = Vector2(334, 172)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_khpr6"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(0, 384, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c3cio"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(64, 384, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mebl8"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(128, 384, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_in56n"]
+atlas = ExtResource("1_f8agp")
+region = Rect2(192, 384, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8amb5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_khpr6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c3cio")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mebl8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_in56n")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="vegueta" type="CharacterBody2D"]
 collision_layer = 3
@@ -360,3 +410,13 @@ volume_db = 24.0
 [node name="hurt" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("8_pkehf")
 volume_db = 10.0
+
+[node name="EnergyEffect" type="AnimatedSprite2D" parent="."]
+position = Vector2(16, -45)
+scale = Vector2(8.625, 7.953125)
+sprite_frames = SubResource("SpriteFrames_8amb5")
+
+[node name="SuperSayayin" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_a1r6l")
+volume_db = 17.66
+script = ExtResource("9_pkehf")
